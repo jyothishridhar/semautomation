@@ -225,7 +225,7 @@ output_directory = 'C:/SEM creation/SEM_Automation/'
 os.makedirs(output_directory, exist_ok=True)
 
 # Define the output file path
-output_file = os.path.join(output_directory, 'C:\SEM creation\SEM_Automation\scraped_data_yaktsa.tiara-hotels.xlsx')
+output_file = os.path.join(output_directory, 'C:\\SEM creation\\SEM_Automation\\scraped_data_yaktsa.tiara-hotels.xlsx')
 
 # Writing to Excel
 df.to_excel(output_file, index=False)
