@@ -9,6 +9,8 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 import time
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
 
 def generate_variants(property_name, max_variants=5):
     # Split the property name into words
@@ -154,8 +156,11 @@ def scrape_similar_hotels(google_url):
 
         # Set up the Selenium webdriver
         options = webdriver.ChromeOptions()
+        options.add_argument('--no-sandbox')
+        options.add_argument('--window-size=1420,1080')
         options.add_argument('--headless')
-        driver = webdriver.Chrome(options=options)
+        options.add_argument('--disable-gpu')
+        driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
         # Navigate to the URL
         driver.get(google_url)
         time.sleep(2)
