@@ -11,6 +11,9 @@ import time
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
+from webdriver_manager.logger import set_log_level
+set_log_level('DEBUG')
+
 
 def generate_variants(property_name, max_variants=5):
     # Split the property name into words
