@@ -8,6 +8,7 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 import time
+from selenium.webdriver.chrome.options import Options
 
 def generate_variants(property_name, max_variants=5):
     # Split the property name into words
@@ -152,8 +153,9 @@ def scrape_similar_hotels(google_url):
         google_url = "https://www.google.com"
 
         # Set up the Selenium webdriver
-        driver = webdriver.Chrome()
-
+        options = webdriver.ChromeOptions()
+        options.add_argument('--headless')
+        driver = webdriver.Chrome(options=options)
         # Navigate to the URL
         driver.get(google_url)
         time.sleep(2)
