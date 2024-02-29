@@ -12,8 +12,6 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 
-
-
 def generate_variants(property_name, max_variants=5):
     # Split the property name into words
     words = property_name.split()
@@ -26,7 +24,7 @@ def generate_variants(property_name, max_variants=5):
 
     return variants
 
-
+# Define function to scrape the first proper paragraph
 def scrape_first_proper_paragraph(url):
     try:
         # Fetch the HTML content of the webpage
@@ -58,6 +56,7 @@ def scrape_first_proper_paragraph(url):
         print("An error occurred:", e)
         return None, None
 
+# Define function to scrape the first header
 def scrape_first_header(url):
     try:
         # Fetch the HTML content of the webpage
@@ -80,6 +79,7 @@ def scrape_first_header(url):
         print("An error occurred while scraping the webpage:", e)
         return None
 
+# Define function to scrape site links
 def scrape_site_links(url, max_links=8):
     try:
         # Fetch the HTML content of the webpage
@@ -152,10 +152,9 @@ def scrape_site_links(url, max_links=8):
         print("An error occurred while scraping the site links:", e)
         return None
 
-    
-def scrape_similar_hotels(google_url):
-        google_url = "https://www.google.com"
-
+# Define function to scrape similar hotels
+def scrape_similar_hotels(google_url, first_header):
+    try:
         # Set up the Selenium webdriver
         options = webdriver.ChromeOptions()
         options.add_argument('--no-sandbox')
@@ -192,6 +191,9 @@ def scrape_similar_hotels(google_url):
         
         return negative_keywords
 
+    except Exception as e:
+        print("An error occurred while scraping similar hotels:", e)
+        return None
 
 # Example usage:
 url = 'https://yaktsa.tiara-hotels.com/en/'
@@ -203,7 +205,7 @@ site_links = scrape_site_links(url)
 property_name_variants = generate_variants(first_header)
 
 # Scraping similar hotels
-negative_keywords = scrape_similar_hotels("https://www.google.com")
+negative_keywords = scrape_similar_hotels("https://www.google.com", first_header)
 
 # Creating DataFrames for each piece of data
 header_df = pd.DataFrame({'Header Text': [first_header]})
