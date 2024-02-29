@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 from urllib.parse import urljoin
 import pandas as pd
 import re
+import os
 from itertools import permutations
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
@@ -217,8 +218,16 @@ negative_keywords_df=pd.DataFrame(negative_keywords, columns=['Negative Keywords
 # Concatenating DataFrames horizontally
 df = pd.concat([header_df, paragraph_df, site_links_df, property_url, property_name_variants_df,negative_keywords_df], axis=1)
 
+# Define the directory path
+output_directory = 'C:/SEM creation/SEM_Automation/'
+
+# Create the directory if it doesn't exist
+os.makedirs(output_directory, exist_ok=True)
+
+# Define the output file path
+output_file = os.path.join(output_directory, 'scraped_data_yaktsa.tiara-hotels.xlsx')
+
 # Writing to Excel
-output_file = 'C:/SEM creation/SEM_Automation/scraped_data_yaktsa.tiara-hotels.xlsx'
 df.to_excel(output_file, index=False)
 
 print("Data has been saved to", output_file)
