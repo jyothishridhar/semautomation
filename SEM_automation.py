@@ -155,7 +155,6 @@ def scrape_site_links(url, max_links=8):
         print("An error occurred while scraping the site links:", e)
         return None
 
-# Define function to scrape similar hotels
 def scrape_similar_hotels(google_url, first_header):
     try:
         # Set up the Selenium webdriver
