@@ -1,9 +1,11 @@
+import streamlit as st
+import pandas as pd
+import os
+import base64
 import requests
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin
-import pandas as pd
 import re
-import os
 from itertools import permutations
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
@@ -196,38 +198,50 @@ def scrape_similar_hotels(google_url, first_header):
         print("An error occurred while scraping similar hotels:", e)
         return None
 
-# Example usage:
-url = 'https://yaktsa.tiara-hotels.com/en/'
-ad_copy1, ad_copy2 = scrape_first_proper_paragraph(url)
-first_header = scrape_first_header(url)
-site_links = scrape_site_links(url)
+# Streamlit app code
+st.title("Web Scraping Demo")
 
-# Generate property name variants
-property_name_variants = generate_variants(first_header)
+# Input URL field
+url = st.text_input("Enter URL")
 
-# Scraping similar hotels
-negative_keywords = scrape_similar_hotels("https://www.google.com", first_header)
+if st.button("Scrape Data"):
+    if url:
+        ad_copy1, ad_copy2 = scrape_first_proper_paragraph(url)
+        first_header = scrape_first_header(url)
+        site_links = scrape_site_links(url)
 
-# Creating DataFrames for each piece of data
-header_df = pd.DataFrame({'Header Text': [first_header]})
-paragraph_df = pd.DataFrame({'Ad copy1': [ad_copy1], 'Ad copy2': [ad_copy2]})
-site_links_df = pd.DataFrame(site_links, columns=['Link Text', 'Link URL'])
-property_url = pd.DataFrame({'property_url': [url]})
-property_name_variants_df = pd.DataFrame({'Variants of Property Name': property_name_variants})
-negative_keywords_df=pd.DataFrame(negative_keywords, columns=['Negative Keywords'])
-# Concatenating DataFrames horizontally
-df = pd.concat([header_df, paragraph_df, site_links_df, property_url, property_name_variants_df,negative_keywords_df], axis=1)
+        # Generate property name variants
+        property_name_variants = generate_variants(first_header)
 
-# Define the directory path
-output_directory = 'C://SEM creation//SEM_Automation//'
+        # Scraping similar hotels
+        negative_keywords = scrape_similar_hotels("https://www.google.com", first_header)
 
-# Create the directory if it doesn't exist
-os.makedirs(output_directory, exist_ok=True)
+        # Creating DataFrames for each piece of data
+        header_df = pd.DataFrame({'Header Text': [first_header]})
+        paragraph_df = pd.DataFrame({'Ad copy1': [ad_copy1], 'Ad copy2': [ad_copy2]})
+        site_links_df = pd.DataFrame(site_links, columns=['Link Text', 'Link URL'])
+        property_url = pd.DataFrame({'property_url': [url]})
+        property_name_variants_df = pd.DataFrame({'Variants of Property Name': property_name_variants})
+        negative_keywords_df=pd.DataFrame(negative_keywords, columns=['Negative Keywords'])
+        # Concatenating DataFrames horizontally
+        df = pd.concat([header_df, paragraph_df, site_links_df, property_url, property_name_variants_df,negative_keywords_df], axis=1)
 
-# Define the output file path
-output_file = os.path.join(output_directory, 'scraped_data_yaktsa.tiara-hotels.xlsx')
+        # Define the directory path
+        output_directory = 'C://SEM creation//SEM_Automation//'
 
-# Writing to Excel
-df.to_excel(output_file, index=False)
+        # Create the directory if it doesn't exist
+        os.makedirs(output_directory, exist_ok=True)
 
-print("Data has been saved to", output_file)
+        # Define the output file path
+        output_file = os.path.join(output_directory, 'scraped_data_yaktsa.tiara-hotels.xlsx')
+
+        # Writing to Excel
+        df.to_excel(output_file, index=False)
+
+        st.success(f"Data has been saved to {output_file}")
+
+        # Display the DataFrame
+        st.dataframe(df)
+
+    else:
+        st.warning("Please enter a URL.")
