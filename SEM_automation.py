@@ -198,6 +198,19 @@ def scrape_similar_hotels(google_url, first_header):
     except Exception as e:
         print("An error occurred while scraping similar hotels:", e)
         return None
+    
+def scrape_static_content():
+    try:
+        # Simulate static content for testing
+        static_content = ["Negative keyword 1", "Negative keyword 2", "Negative keyword 3"]
+        return static_content
+    except Exception as e:
+        print("An error occurred while scraping static content:", e)
+        return None
+
+# Call the function to scrape static content
+negative_keywords = scrape_static_content()
+
 
 
 # Streamlit app code
