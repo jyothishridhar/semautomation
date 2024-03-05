@@ -166,7 +166,7 @@ def scrape_similar_hotels(google_url, first_header):
 
         # Navigate to the URL
         driver.get(google_url)
-        time.sleep(2)
+        time.sleep(10)
 
         # Find the search box element by XPath
         search_box = driver.find_element(By.XPATH, "//textarea[@id='APjFqb' and @name='q']")
