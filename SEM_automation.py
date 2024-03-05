@@ -202,7 +202,7 @@ url = st.text_input("Enter URL")
 if st.button("Scrape Data"):
     if url:
         ad_copy1, ad_copy2 = scrape_first_proper_paragraph(url)
-        first_header = scrape_first_header(url)
+        first_header = scrape_first_header(url)  # Get the first header here
         site_links = scrape_site_links(url)
 
         # Generate property name variants
@@ -217,9 +217,9 @@ if st.button("Scrape Data"):
         site_links_df = pd.DataFrame(site_links, columns=['Link Text', 'Link URL'])
         property_url = pd.DataFrame({'property_url': [url]})
         property_name_variants_df = pd.DataFrame({'Variants of Property Name': property_name_variants})
-        negative_keywords_df=pd.DataFrame(negative_keywords, columns=['Negative Keywords'])
+        negative_keywords_df = pd.DataFrame(negative_keywords, columns=['Negative Keywords'])
         # Concatenating DataFrames horizontally
-        df = pd.concat([header_df, paragraph_df, site_links_df, property_url, property_name_variants_df,negative_keywords_df], axis=1)
+        df = pd.concat([header_df, paragraph_df, site_links_df, property_url, property_name_variants_df, negative_keywords_df], axis=1)
 
         # Define the directory path
         output_directory = 'C://SEM creation//SEM_Automation//'
