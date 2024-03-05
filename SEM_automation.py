@@ -158,12 +158,8 @@ def scrape_site_links(url, max_links=8):
 def scrape_similar_hotels(google_url, first_header):
     try:
         # Set up the Selenium webdriver
-        options = webdriver.ChromeOptions()
-        options.add_argument('--no-sandbox')
-        options.add_argument('--window-size=1420,1080')
-        options.add_argument('--headless')
-        options.add_argument('--disable-gpu')
-        driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
+        driver = webdriver.Chrome()
+
         # Navigate to the URL
         driver.get(google_url)
         time.sleep(2)
