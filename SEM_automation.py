@@ -220,7 +220,8 @@ if st.button("Scrape Data"):
         property_name_variants = generate_variants(first_header)
 
         # Scraping similar hotels
-        negative_keywords = scrape_similar_hotels("https://www.google.com", first_header)
+        negative_keywords = scrape_similar_hotels("https://www.google.com")
+
 
         # Creating DataFrames for each piece of data
         header_df = pd.DataFrame({'Header Text': [first_header]})
