@@ -155,6 +155,7 @@ def scrape_site_links(url, max_links=8):
 
 def scrape_similar_hotels(google_url, first_header):
     try:
+        print("Fetching similar hotels...")
         # Set up the Selenium webdriver
         options = Options()
         options.add_argument('--headless')
@@ -185,12 +186,14 @@ def scrape_similar_hotels(google_url, first_header):
 
         # Close the browser
         driver.quit()
-        
+
+        print("Negative Keywords:", negative_keywords)
         return negative_keywords
     
     except Exception as e:
         print("An error occurred while scraping similar hotels:", e)
         return None
+
 
 # Streamlit app code
 st.title("Web Scraping Demo")
