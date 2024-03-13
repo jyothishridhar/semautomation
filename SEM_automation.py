@@ -155,18 +155,15 @@ def scrape_site_links(url, max_links=8):
         print("An error occurred while scraping the site links:", e)
         return None
 
-def scrape_similar_hotels(google_url, first_header):
-    try:
-        print("Inside scrape_similar_hotels function")
-        print("Google URL:", google_url)
-        print("First Header:", first_header)
+def scrape_similar_hotels(google_url):
+        google_url = "https://www.google.com"
 
         # Set up the Selenium webdriver
         driver = webdriver.Chrome()
 
         # Navigate to the URL
         driver.get(google_url)
-        time.sleep(10)
+        time.sleep(2)
 
         # Find the search box element by XPath
         search_box = driver.find_element(By.XPATH, "//textarea[@id='APjFqb' and @name='q']")
@@ -190,26 +187,20 @@ def scrape_similar_hotels(google_url, first_header):
 
         # Close the browser
         driver.quit()
-
-        print("Negative Keywords:", negative_keywords)
         
         return negative_keywords
-
-    except Exception as e:
-        print("An error occurred while scraping similar hotels:", e)
-        return None
     
-def scrape_static_content():
-    try:
-        # Simulate static content for testing
-        static_content = ["Negative keyword 1", "Negative keyword 2", "Negative keyword 3"]
-        return static_content
-    except Exception as e:
-        print("An error occurred while scraping static content:", e)
-        return None
+# def scrape_static_content():
+#     try:
+#         # Simulate static content for testing
+#         static_content = ["Negative keyword 1", "Negative keyword 2", "Negative keyword 3"]
+#         return static_content
+#     except Exception as e:
+#         print("An error occurred while scraping static content:", e)
+#         return None
 
-# Call the function to scrape static content
-negative_keywords = scrape_static_content()
+# # Call the function to scrape static content
+# negative_keywords = scrape_static_content()
 
 
 
@@ -238,8 +229,9 @@ if st.button("Scrape Data"):
         property_url = pd.DataFrame({'property_url': [url]})
         property_name_variants_df = pd.DataFrame({'Variants of Property Name': property_name_variants})
         negative_keywords_df = pd.DataFrame(negative_keywords, columns=['Negative Keywords'])
+        callouts_df = pd.DataFrame({'Callouts': ["Book Direct", "Great Location", "Spacious Suites"]})
         # Concatenating DataFrames horizontally
-        df = pd.concat([header_df, paragraph_df, site_links_df, property_url, property_name_variants_df, negative_keywords_df], axis=1)
+        df = pd.concat([header_df, paragraph_df, site_links_df, property_url, property_name_variants_df, negative_keywords_df,callouts_df], axis=1)
 
         # Define the directory path
         output_directory = 'C://SEM creation//SEM_Automation//'
