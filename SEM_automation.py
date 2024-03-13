@@ -165,13 +165,8 @@ def scrape_similar_hotels(google_url, first_header):
 
         # driver=webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()))
 
-        import chromedriver_autoinstaller
-        chromedriver_autoinstaller.install()
+        driver = webdriver.Chrome(executable_path='C:\\Users\\jyothi.s\\chromedriver\\chromedriver-win64\\chromedriver.exe')
 
-        driver = webdriver.Chrome()
-
-        # Navigate to the URL
-        print("Navigating to Google URL:", google_url)
         driver.get(google_url)
 
         time.sleep(2)
