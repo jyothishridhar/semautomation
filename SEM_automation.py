@@ -157,12 +157,16 @@ def scrape_similar_hotels(google_url, first_header):
     try:
         print("Fetching similar hotels...")
         # Set up the Selenium webdriver
-        options = Options()
-        options.add_argument('--headless')
-        driver = webdriver.Chrome(options=options)
+        from selenium import webdriver
 
+        from selenium.webdriver.chrome.service import Service as ChromeService
+
+        from webdriver_manager.chrome import ChromeDriverManager
+
+        driver=webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()))
         # Navigate to the URL
         driver.get(google_url)
+        
         time.sleep(2)
 
         # Find the search box element by XPath
