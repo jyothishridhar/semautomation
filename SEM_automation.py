@@ -12,8 +12,6 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 import time
 from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.chrome.service import Service
-from webdriver_manager.chrome import ChromeDriverManager
 
 def generate_variants(property_name, max_variants=5):
     # Split the property name into words
@@ -155,11 +153,12 @@ def scrape_site_links(url, max_links=8):
         print("An error occurred while scraping the site links:", e)
         return None
 
-def scrape_similar_hotels(google_url):
-        google_url = "https://www.google.com"
-
+def scrape_similar_hotels(google_url, first_header):
+    try:
         # Set up the Selenium webdriver
-        driver = webdriver.Chrome()
+        options = Options()
+        options.add_argument('--headless')
+        driver = webdriver.Chrome(options=options)
 
         # Navigate to the URL
         driver.get(google_url)
@@ -179,7 +178,6 @@ def scrape_similar_hotels(google_url):
 
         # Find elements matching the XPath for the search results
         search_results = driver.find_elements(By.XPATH, "//div[@class='hrZZ8d']")
-        # print('search_results:',search_results)
 
         negative_keywords = []
         for result in search_results:
@@ -190,19 +188,9 @@ def scrape_similar_hotels(google_url):
         
         return negative_keywords
     
-# def scrape_static_content():
-#     try:
-#         # Simulate static content for testing
-#         static_content = ["Negative keyword 1", "Negative keyword 2", "Negative keyword 3"]
-#         return static_content
-#     except Exception as e:
-#         print("An error occurred while scraping static content:", e)
-#         return None
-
-# # Call the function to scrape static content
-# negative_keywords = scrape_static_content()
-
-
+    except Exception as e:
+        print("An error occurred while scraping similar hotels:", e)
+        return None
 
 # Streamlit app code
 st.title("Web Scraping Demo")
@@ -220,7 +208,7 @@ if st.button("Scrape Data"):
         property_name_variants = generate_variants(first_header)
 
         # Scraping similar hotels
-        negative_keywords = scrape_similar_hotels("https://www.google.com")
+        negative_keywords = scrape_similar_hotels("https://www.google.com", first_header)
 
 
         # Creating DataFrames for each piece of data
