@@ -6,4 +6,4 @@ selenium
 webdriver-manager
 openpyxl
 fsspec
-chromedriver
+chromedriver_autoinstaller

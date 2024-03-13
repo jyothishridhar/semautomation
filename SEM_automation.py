@@ -170,7 +170,8 @@ def scrape_similar_hotels(google_url, first_header):
 
         driver = webdriver.Chrome()
 
-        # # Navigate to the URL
+        # Navigate to the URL
+        print("Navigating to Google URL:", google_url)
         driver.get(google_url)
 
         time.sleep(2)
