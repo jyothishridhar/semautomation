@@ -57,27 +57,21 @@ def scrape_first_proper_paragraph(url):
         print("An error occurred:", e)
         return None, None
 
-# Define function to scrape the first header
-def scrape_first_header(url):
+def extract_header_from_path(output_file):
     try:
-        # Fetch the HTML content of the webpage
-        response = requests.get(url)
-        response.raise_for_status()  # Raise an exception for bad requests
-
-        # Parse the HTML content
-        soup = BeautifulSoup(response.text, 'html.parser')
-
-        # Find the first header tag (h1, h2, h3, etc.)
-        first_header = soup.find(['h1','h2'])
-
-        # Check if any header tag was found
-        if first_header:
-            return first_header.text.strip()
-        else:
-            return "No header tag found on the page."
-
+        # Extract filename from the path
+        filename = os.path.basename(output_file)
+        
+        # Remove extension from filename
+        filename_without_extension = os.path.splitext(filename)[0]
+        
+        # Replace underscores with spaces
+        header_text = filename_without_extension.replace('_', ' ')
+        
+        return header_text.strip()
+    
     except Exception as e:
-        print("An error occurred while scraping the webpage:", e)
+        print("An error occurred while extracting header from file path:", e)
         return None
 
 # Define function to scrape site links
@@ -153,7 +147,7 @@ def scrape_site_links(url, max_links=8):
         print("An error occurred while scraping the site links:", e)
         return None
 
-def scrape_similar_hotels(google_url, first_header):
+def scrape_similar_hotels(google_url, header_text):
     try:
         print("Fetching similar hotels...")
         # Set up the Selenium webdriver
@@ -175,7 +169,7 @@ def scrape_similar_hotels(google_url, first_header):
         search_box = driver.find_element(By.XPATH, "//textarea[@id='APjFqb' and @name='q']")
 
         # Type the search query
-        search_box.send_keys(first_header)
+        search_box.send_keys(header_text)
 
         # Press Enter to perform the search
         search_box.send_keys(Keys.RETURN)
@@ -202,7 +196,7 @@ def scrape_similar_hotels(google_url, first_header):
 
 
 # Streamlit app code
-st.title("Web Scraping Demo")
+st.title("SEM Creation Template")
 
 # Input URL field
 url = st.text_input("Enter URL")
@@ -210,18 +204,19 @@ url = st.text_input("Enter URL")
 if st.button("Scrape Data"):
     if url:
         ad_copy1, ad_copy2 = scrape_first_proper_paragraph(url)
-        first_header = scrape_first_header(url)  # Get the first header here
+        output_file = "C://SEM creation//GRAND INNA MEDAN.xlsx"
+        header_text = extract_header_from_path(output_file)  # Get the first header here
         site_links = scrape_site_links(url)
 
         # Generate property name variants
-        property_name_variants = generate_variants(first_header)
+        property_name_variants = generate_variants(header_text)
 
         # Scraping similar hotels
-        negative_keywords = scrape_similar_hotels("https://www.google.com", first_header)
+        negative_keywords = scrape_similar_hotels("https://www.google.com", header_text)
 
 
         # Creating DataFrames for each piece of data
-        header_df = pd.DataFrame({'Header Text': [first_header]})
+        header_df = pd.DataFrame({'Header Text': [header_text]})
         paragraph_df = pd.DataFrame({'Ad copy1': [ad_copy1], 'Ad copy2': [ad_copy2]})
         site_links_df = pd.DataFrame(site_links, columns=['Link Text', 'Link URL'])
         property_url = pd.DataFrame({'property_url': [url]})
@@ -232,13 +227,13 @@ if st.button("Scrape Data"):
         df = pd.concat([header_df, paragraph_df, site_links_df, property_url, property_name_variants_df, negative_keywords_df,callouts_df], axis=1)
 
         # Define the directory path
-        output_directory = 'C://SEM creation//SEM_Automation//'
+        # output_directory = 'C://SEM creation//SEM_Automation//'
 
         # Create the directory if it doesn't exist
-        os.makedirs(output_directory, exist_ok=True)
+        # os.makedirs(output_directory, exist_ok=True)
 
         # Define the output file path
-        output_file = os.path.join(output_directory, 'scraped_data_yaktsa.tiara-hotels.xlsx')
+        # output_file = os.path.join(output_directory, 'HOTEL TIARA YAKTSA.xlsx')
 
         # Writing to Excel
         df.to_excel(output_file, index=False)
