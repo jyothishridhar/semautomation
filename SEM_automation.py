@@ -201,6 +201,9 @@ st.title("SEM Creation Template")
 # Input URL field
 url = st.text_input("Enter URL")
 
+output_file=st.text_input("Enter Header text")
+
+
 if st.button("Scrape Data"):
     if url:
         ad_copy1, ad_copy2 = scrape_first_proper_paragraph(url)
