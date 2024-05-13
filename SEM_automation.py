@@ -179,6 +179,7 @@ def scrape_related_information(header_text):
         # Send a GET request to Google Search
         response = requests.get(google_url)
         response.raise_for_status()  # Raise an exception for bad requests
+        print("header_text",header_text)
         
         # Parse the HTML content
         soup = BeautifulSoup(response.text, 'html.parser')
