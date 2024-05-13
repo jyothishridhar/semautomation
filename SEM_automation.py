@@ -171,7 +171,7 @@ def scrape_site_links(url, max_links=8):
         return None
  
  
-def scrape_similar_hotels(url):
+def scrape_similar_hotels(url,header_text):
     try:
         print("Fetching similar hotels...")
         # Define the search parameters including the header text
@@ -382,7 +382,8 @@ if st.button("Scrape Data"):
         property_name_variants = generate_variants(header_text) if header_text else []
  
         # Scraping similar hotels
-        negative_keywords = scrape_similar_hotels("url")
+        negative_keywords = scrape_similar_hotels(url, header_text) if header_text else []
+ 
  
         # Creating DataFrames for each piece of data
         header_df = pd.DataFrame({'Header Text': [header_text] if header_text else []})
