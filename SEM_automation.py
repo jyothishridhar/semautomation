@@ -176,6 +176,7 @@ def scrape_similar_hotels(google_url, header_text):
         print("Fetching similar hotels...")
         # Define the search parameters including the header text
         search_params = {'q': header_text}
+        print(" search_params ", search_params )
         # Make a GET request to the Google search URL with the search parameters
         response = requests.get(google_url, params=search_params)
         response.raise_for_status()  # Raise an exception for bad requests
@@ -185,9 +186,11 @@ def scrape_similar_hotels(google_url, header_text):
         
         # Find all search result divs
         search_results = soup.find_all('div', class_='hrZZ8d')
+        print("search_results",search_results)
         
         # Extract the text from each search result div
         negative_keywords = [result.get_text() for result in search_results]
+        print("negative_keywords ",negative_keywords )
         
         # Print and return the negative keywords
         print("Negative Keywords:", negative_keywords)
