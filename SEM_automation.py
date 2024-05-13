@@ -171,7 +171,7 @@ def scrape_site_links(url, max_links=8):
         return None
  
  
-def scrape_related_information(header_text):
+def scrape_information_from_google(header_text):
     try:
         # Construct the URL with the header text as a query parameter
         google_url = f"https://www.google.com/search?q={header_text}"
@@ -197,6 +197,37 @@ def scrape_related_information(header_text):
     except Exception as e:
         print("An error occurred while scraping related information:", e)
         return None
+
+# Example usage
+header_text = "Westgate Lakes Resort and Spa"
+
+try:
+    # Construct the URL with the header text as a query parameter
+    google_url = f"https://www.google.com/search?q={header_text}"
+    
+    # Send a GET request to Google Search
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'
+    }
+    response = requests.get(google_url, headers=headers)
+    response.raise_for_status()  # Raise an exception for bad requests
+    
+    # Parse the HTML content
+    soup = BeautifulSoup(response.text, 'html.parser')
+    
+    # Find all divs with class 'hrZZ8d' (assuming this contains the related information)
+    related_info_divs = soup.find_all('div', class_='hrZZ8d')
+    
+    # Extract the text from each div
+    related_info = [div.get_text(strip=True) for div in related_info_divs]
+    
+    # Use the extracted information as needed
+    print("Related Information:")
+    for info in related_info:
+        print(info)
+
+except Exception as e:
+    print("An error occurred while scraping related information from Google:", e)
 
 # Define a function to handle timeouts
 def timeout_handler():
@@ -381,7 +412,7 @@ if st.button("Scrape Data"):
         property_name_variants = generate_variants(header_text) if header_text else []
  
         # Scraping similar hotels
-        negative_keywords = scrape_related_information(header_text) if header_text else []
+        negative_keywords = scrape_information_from_google(header_text)
  
  
         # Creating DataFrames for each piece of data
