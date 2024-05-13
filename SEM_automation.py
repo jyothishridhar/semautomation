@@ -182,9 +182,11 @@ def scrape_related_information(header_text):
         
         # Parse the HTML content
         soup = BeautifulSoup(response.text, 'html.parser')
+        print("soup", soup)
         
         # Find all divs with class 'hrZZ8d' (assuming this contains the related information)
         related_info_divs = soup.find_all('div', class_='hrZZ8d')
+        print("related_info_divs",related_info_divs)
         
         # Extract the text from each div
         related_info = [div.get_text(strip=True) for div in related_info_divs]
