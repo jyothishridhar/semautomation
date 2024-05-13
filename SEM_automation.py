@@ -171,27 +171,28 @@ def scrape_site_links(url, max_links=8):
         return None
  
  
-def scrape_similar_hotels(url, header_text):
+def scrape_related_information(header_text):
     try:
-        # Fetch the HTML content of the webpage
-        response = requests.get(url)
+        # Construct the URL with the header text as a query parameter
+        google_url = f"https://www.google.com/search?q={header_text}"
+        
+        # Send a GET request to Google Search
+        response = requests.get(google_url)
         response.raise_for_status()  # Raise an exception for bad requests
-
+        
         # Parse the HTML content
         soup = BeautifulSoup(response.text, 'html.parser')
-
-        # Find similar hotels information based on header text
-        search_results = soup.find_all('div', class_='hrZZ8d')
-
-        negative_keywords = []
-        for result in search_results:
-            negative_keywords.append(result.text)
-
-        print("Negative Keywords:", negative_keywords)
-        return negative_keywords
-
+        
+        # Find all divs with class 'hrZZ8d' (assuming this contains the related information)
+        related_info_divs = soup.find_all('div', class_='hrZZ8d')
+        
+        # Extract the text from each div
+        related_info = [div.get_text(strip=True) for div in related_info_divs]
+        
+        return related_info
+    
     except Exception as e:
-        print("An error occurred while scraping similar hotels:", e)
+        print("An error occurred while scraping related information:", e)
         return None
 
 # Define a function to handle timeouts
@@ -377,7 +378,7 @@ if st.button("Scrape Data"):
         property_name_variants = generate_variants(header_text) if header_text else []
  
         # Scraping similar hotels
-        negative_keywords = scrape_similar_hotels(url, header_text) if header_text else []
+        negative_keywords = scrape_related_information(header_text) if header_text else []
  
  
         # Creating DataFrames for each piece of data
