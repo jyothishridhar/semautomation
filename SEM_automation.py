@@ -35,6 +35,8 @@ def scrape_first_proper_paragraph(url):
         chrome_options = Options()
         chrome_options.add_argument('--headless')  # Run Chrome in headless mode
         chrome_options.add_argument('--no-sandbox')  # Required for running in headless mode in certain environments
+        # Specify the path to Chrome binary
+        chrome_options.binary_location = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
 
         driver = webdriver.Chrome(ChromeDriverManager().install(), options=chrome_options)
         
