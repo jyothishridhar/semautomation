@@ -35,7 +35,7 @@ def scrape_first_proper_paragraph(url):
         chrome_options = Options()
         # Uncomment the line below if you want to run Chrome in headless mode
         # chrome_options.add_argument('--headless')
-        chrome_options.binary_location = "C:\\Users\\jyothi.s\\.wdm\\drivers\\chromedriver\\win64\\124.0.6367.91"  # Specify the path to Chrome binary
+        chrome_options.binary_location = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"  # Specify the path to Chrome binary
 
         driver = webdriver.Chrome(ChromeDriverManager().install(), options=chrome_options)
         driver.get(url)
