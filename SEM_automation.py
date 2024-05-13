@@ -193,10 +193,19 @@ def scrape_similar_hotels(header_text):
         # Extract links and titles
         links = []
         for result in search_results:
+            # Find the div with class "hrZZ8d"
+            related_info_div = result.find('div', class_='hrZZ8d')
+            if related_info_div:
+                # Extract text from the div
+                related_info_text = related_info_div.get_text(strip=True)
+            else:
+                related_info_text = "No related information found"
+            
+            # Find the link tag
             link_tag = result.find('a')
             link_url = link_tag.get('href')
-            link_title = link_tag.find('hrZZ8d').text
-            links.append((link_title, link_url))
+            link_title = link_tag.find('h3').text
+            links.append((link_title, link_url, related_info_text))
         
         return links
         
