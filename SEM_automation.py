@@ -178,7 +178,7 @@ import re
 def scrape_similar_hotels(header_text):
     try:
         # Prepare the Google search URL with the header text
-        google_url = f"https://www.google.com/search?q={header_text.replace(' ', '+')}"
+        google_url = f"https://www.google.com/search?q=header_text"
         
         # Send a GET request to Google
         response = requests.get(google_url)
@@ -189,6 +189,7 @@ def scrape_similar_hotels(header_text):
         
         # Find all search result links
         search_results = soup.find_all('div', class_='GtJDDb')
+        print("search_results",search_results)
         
         # Extract links and titles
         links = []
