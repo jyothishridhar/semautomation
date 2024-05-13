@@ -33,11 +33,11 @@ def generate_variants(property_name, max_variants=5):
 def scrape_first_proper_paragraph(url):
     try:
         chrome_options = Options()
-        # Uncomment the line below if you want to run Chrome in headless mode
-        # chrome_options.add_argument('--headless')
-        chrome_options.binary_location = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"  # Specify the path to Chrome binary
+        chrome_options.add_argument('--headless')  # Run Chrome in headless mode
+        chrome_options.add_argument('--no-sandbox')  # Required for running in headless mode in certain environments
 
         driver = webdriver.Chrome(ChromeDriverManager().install(), options=chrome_options)
+        
         driver.get(url)
         time.sleep(6)
         
