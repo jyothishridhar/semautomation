@@ -177,17 +177,17 @@ def scrape_related_information(header_text):
         google_url = f"https://www.google.com/search?q={header_text}"
         
         # Send a GET request to Google Search
-        response = requests.get(google_url)
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'
+        }
+        response = requests.get(google_url, headers=headers)
         response.raise_for_status()  # Raise an exception for bad requests
-        print("header_text",header_text)
         
         # Parse the HTML content
         soup = BeautifulSoup(response.text, 'html.parser')
-        print("soup", soup)
         
         # Find all divs with class 'hrZZ8d' (assuming this contains the related information)
         related_info_divs = soup.find_all('div', class_='hrZZ8d')
-        print("related_info_divs",related_info_divs)
         
         # Extract the text from each div
         related_info = [div.get_text(strip=True) for div in related_info_divs]
