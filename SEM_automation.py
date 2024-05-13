@@ -174,28 +174,20 @@ def scrape_site_links(url, max_links=8):
 def scrape_similar_hotels(google_url, header_text):
     try:
         print("Fetching similar hotels...")
-        options = Options()
-        driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
-        driver.get(google_url)
-        time.sleep(2)
- 
-        search_box = driver.find_element(By.XPATH, "//textarea[@id='APjFqb' and @name='q']")
-        search_box.send_keys(header_text)
-        search_box.send_keys(Keys.RETURN)
-        time.sleep(10)
- 
-        search_results = driver.find_elements(By.XPATH, "//div[@class='hrZZ8d']")
- 
-        negative_keywords = []
-        for result in search_results:
-            negative_keywords.append(result.text)
- 
-        # Close the browser
-        driver.quit()
- 
+        search_params = {'q': header_text}
+        response = requests.get(google_url, params=search_params)
+        response.raise_for_status()  # Raise an exception for bad requests
+        
+        soup = BeautifulSoup(response.text, 'html.parser')
+        
+        # Find all search result divs
+        search_results = soup.find_all('div', class_='hrZZ8d')
+        
+        negative_keywords = [result.get_text() for result in search_results]
+        
         print("Negative Keywords:", negative_keywords)
         return negative_keywords
- 
+
     except Exception as e:
         print("An error occurred while scraping similar hotels:", e)
         return None
