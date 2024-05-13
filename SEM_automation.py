@@ -32,24 +32,12 @@ def generate_variants(property_name, max_variants=5):
 # Define function to scrape the first proper paragraph
 def scrape_first_proper_paragraph(url):
     try:
-        options = webdriver.ChromeOptions()
-        options.add_argument('--no-sandbox')
-        options.add_argument('--window-size=1420,1080')
-        options.add_argument('--headless')
-        options.add_argument('--disable-gpu')
-
-        chromedriver_path = "C:\\Program Files\\Google\\Chrome\\Application\\new_chrome.exe"
-        driver = webdriver.Chrome(service=Service(chromedriver_path), options=options)
-        
-        driver.get(url)
-        time.sleep(6)
-        
-        # Get the page source after rendering
-        page_source = driver.page_source
-        driver.quit()  # Close the browser
+        # Fetch the HTML content of the webpage
+        response = requests.get(url, timeout=10)
+        response.raise_for_status()  # Raise an exception for bad requests
         
         # Parse the HTML content
-        soup = BeautifulSoup(page_source, 'html.parser')
+        soup = BeautifulSoup(response.text, 'html.parser')
         # Find all <p> tags
         p_tags = soup.find_all('p')
         # Initialize a variable to store the text of the first two paragraphs
