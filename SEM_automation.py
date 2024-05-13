@@ -190,29 +190,14 @@ def scrape_information_from_google(header_text):
         related_info_divs = soup.find_all('div', class_='hrZZ8d')
         
         # Extract the text from each div
-        related_info = [div.get_text(strip=True) for div in related_info_divs]
+        negative_keywords = [div.get_text(strip=True) for div in related_info_divs]
         
-        return related_info
+        return negative_keywords
     
     except Exception as e:
         print("An error occurred while scraping related information:", e)
         return None
-    
-header_text = "Westgate Lakes Resort and Spa"    
-try:
-    # Scrape information from Google search results
-    negative_keywords = scrape_information_from_google(header_text)
-    
-    # Print the scraped information
-    if negative_keywords:
-        print("Related Information:")
-        for info in negative_keywords:
-            print(info)
-    else:
-        print("No related information found.")
 
-except Exception as e:
-    print("An error occurre:", e)
 
 
 
@@ -361,10 +346,29 @@ def fetch_amenities_from_sub_links(site_links, max_sub_links=4, timeout=10):
 st.title("SEM Creation Template")
 # Input URL field
 url = st.text_input("Enter URL")
-# Input for output file path
+# # Input for output file path
+header_text = st.text_input("Enter Header Text")
 output_file = st.text_input("Enter Header")
  
 if st.button("Scrape Data"):
+
+    if st.button("Scrape Related Information"):
+        if header_text:
+            # Scrape information from Google search results
+            negative_keywords = scrape_information_from_google(header_text)
+            
+            # Display the scraped information
+            if negative_keywords:
+                st.success("Related Information:")
+                for info in negative_keywords:
+                    st.write(info)
+            else:
+                st.warning("No related information found.")
+        else:
+            st.warning("Please enter a header text.")
+
+
+
     if url:
  
         ad_copy1, ad_copy2 = scrape_first_proper_paragraph(url)
