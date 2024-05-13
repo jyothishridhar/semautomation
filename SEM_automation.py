@@ -38,9 +38,8 @@ def scrape_first_proper_paragraph(url):
         options.add_argument('--headless')
         options.add_argument('--disable-gpu')
 
-
-        
-        driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
+        chromedriver_path = "C:\\Program Files\\Google\\Chrome\\Application\\new_chrome.exe"
+        driver = webdriver.Chrome(service=Service(chromedriver_path), options=options)
         
         driver.get(url)
         time.sleep(6)
