@@ -404,7 +404,7 @@ if st.button("Scrape Data"):
         property_name_variants = generate_variants(header_text) if header_text else []
  
         # Scraping similar hotels
-        # negative_keywords = scrape_information_from_google(header_text)
+        negative_keywords = scrape_information_from_google(header_text)
  
  
         # Creating DataFrames for each piece of data
