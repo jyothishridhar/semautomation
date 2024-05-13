@@ -171,32 +171,46 @@ def scrape_site_links(url, max_links=8):
         return None
  
  
-def scrape_information_from_google(header_text):
+import requests
+from bs4 import BeautifulSoup
+import re
+
+def scrape_similar_hotels(header_text):
     try:
-        # Construct the URL with the header text as a query parameter
-        google_url = f"https://www.google.com/search?q={header_text}"
+        # Prepare the Google search URL with the header text
+        google_url = f"https://www.google.com/search?q={header_text.replace(' ', '+')}"
         
-        # Send a GET request to Google Search
-        headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'
-        }
-        response = requests.get(google_url, headers=headers)
+        # Send a GET request to Google
+        response = requests.get(google_url)
         response.raise_for_status()  # Raise an exception for bad requests
         
         # Parse the HTML content
         soup = BeautifulSoup(response.text, 'html.parser')
         
-        # Find all divs with class 'hrZZ8d' (assuming this contains the related information)
-        related_info_divs = soup.find_all('div', class_='hrZZ8d')
+        # Find all search result links
+        search_results = soup.find_all('div', class_='GtJDDb')
         
-        # Extract the text from each div
-        negative_keywords = [div.get_text(strip=True) for div in related_info_divs]
+        # Extract links and titles
+        links = []
+        for result in search_results:
+            link_tag = result.find('a')
+            link_url = link_tag.get('href')
+            link_title = link_tag.find('hrZZ8d').text
+            links.append((link_title, link_url))
         
-        return negative_keywords
-    
+        return links
+        
     except Exception as e:
-        print("An error occurred while scraping related information:", e)
+        print("An error occurred while scraping related links:", e)
         return None
+
+# # Example usage
+# header_text = "Westgate Lakes Resort and Spa"
+# related_links = scrape_related_links(header_text)
+# if related_links:
+#     for title, url in related_links:
+#         print(title, ":", url)
+
 
 
 
@@ -347,25 +361,25 @@ st.title("SEM Creation Template")
 # Input URL field
 url = st.text_input("Enter URL")
 # # Input for output file path
-header_text = st.text_input("Enter Header Text")
+# header_text = st.text_input("Enter Header Text")
 output_file = st.text_input("Enter Header")
  
 if st.button("Scrape Data"):
 
-    if st.button("Scrape Related Information"):
-        if header_text:
-            # Scrape information from Google search results
-            negative_keywords = scrape_information_from_google(header_text)
+    # if st.button("Scrape Related Information"):
+    #     if header_text:
+    #         # Scrape information from Google search results
+    #         negative_keywords = scrape_information_from_google(header_text)
             
-            # Display the scraped information
-            if negative_keywords:
-                st.success("Related Information:")
-                for info in negative_keywords:
-                    st.write(info)
-            else:
-                st.warning("No related information found.")
-        else:
-            st.warning("Please enter a header text.")
+    #         # Display the scraped information
+    #         if negative_keywords:
+    #             st.success("Related Information:")
+    #             for info in negative_keywords:
+    #                 st.write(info)
+    #         else:
+    #             st.warning("No related information found.")
+    #     else:
+    #         st.warning("Please enter a header text.")
 
 
 
@@ -404,7 +418,7 @@ if st.button("Scrape Data"):
         property_name_variants = generate_variants(header_text) if header_text else []
  
         # Scraping similar hotels
-        negative_keywords = scrape_information_from_google(header_text)
+        negative_keywords = scrape_similar_hotels(header_text)
  
  
         # Creating DataFrames for each piece of data
