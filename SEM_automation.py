@@ -32,13 +32,15 @@ def generate_variants(property_name, max_variants=5):
 # Define function to scrape the first proper paragraph
 def scrape_first_proper_paragraph(url):
     try:
-        chrome_options = Options()
-        chrome_options.add_argument('--headless')  # Run Chrome in headless mode
-        chrome_options.add_argument('--no-sandbox')  # Required for running in headless mode in certain environments
-        # Specify the path to Chrome binary
-        chrome_options.binary_location = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
+        options = webdriver.ChromeOptions()
+        options.add_argument('--no-sandbox')
+        options.add_argument('--window-size=1420,1080')
+        options.add_argument('--headless')
+        options.add_argument('--disable-gpu')
 
-        driver = webdriver.Chrome(ChromeDriverManager().install(), options=chrome_options)
+
+        
+        driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
         
         driver.get(url)
         time.sleep(6)
