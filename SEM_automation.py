@@ -171,34 +171,31 @@ def scrape_site_links(url, max_links=8):
         return None
  
  
-def scrape_similar_hotels(google_url, header_text):
+def scrape_similar_hotels(url, header_text):
     try:
         print("Fetching similar hotels...")
-        # Define the search parameters including the header text
-        search_params = {'q': header_text}
-        print(" search_params ", search_params )
-        # Make a GET request to the Google search URL with the search parameters
-        response = requests.get(google_url, params=search_params)
+        response = requests.get(url)
         response.raise_for_status()  # Raise an exception for bad requests
-        
-        # Parse the HTML content of the response
+
+        # Parse the HTML content
         soup = BeautifulSoup(response.text, 'html.parser')
-        
-        # Find all search result divs
-        search_results = soup.find_all('div', class_='hrZZ8d')
-        print("search_results",search_results)
-        
-        # Extract the text from each search result div
-        negative_keywords = [result.get_text() for result in search_results]
-        print("negative_keywords ",negative_keywords )
-        
-        # Print and return the negative keywords
-        print("Negative Keywords:", negative_keywords)
+        negative_keywords = []
+
+        # Find all relevant div elements with class 'hrZZ8d'
+        div_elements = soup.find_all('div', class_='hrZZ8d')
+
+        # Iterate over div elements to extract related information
+        for div in div_elements:
+            # Check if the header text is present in the div content
+            if header_text.lower() in div.get_text().lower():
+                negative_keywords.append(div.get_text().strip())
+
         return negative_keywords
 
     except Exception as e:
-        print("An error occurred while scraping similar hotels:", e)
+        print("An error occurred while scraping negative_keywords:", e)
         return None
+
 
 
  
@@ -386,7 +383,7 @@ if st.button("Scrape Data"):
         property_name_variants = generate_variants(header_text) if header_text else []
  
         # Scraping similar hotels
-        negative_keywords = scrape_similar_hotels("https://www.google.com/search", header_text) if header_text else []
+        negative_keywords = scrape_similar_hotels(url, header_text) if header_text else []
  
  
         # Creating DataFrames for each piece of data
