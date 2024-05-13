@@ -171,13 +171,13 @@ def scrape_site_links(url, max_links=8):
         return None
  
  
-def scrape_similar_hotels(url,header_text):
+def scrape_similar_hotels(google_url, header_text):
     try:
         print("Fetching similar hotels...")
         # Define the search parameters including the header text
         search_params = {'q': header_text}
         # Make a GET request to the Google search URL with the search parameters
-        response = requests.get(url, params=search_params)
+        response = requests.get(google_url, params=search_params)
         response.raise_for_status()  # Raise an exception for bad requests
         
         # Parse the HTML content of the response
@@ -196,6 +196,7 @@ def scrape_similar_hotels(url,header_text):
     except Exception as e:
         print("An error occurred while scraping similar hotels:", e)
         return None
+
 
  
    
@@ -382,7 +383,7 @@ if st.button("Scrape Data"):
         property_name_variants = generate_variants(header_text) if header_text else []
  
         # Scraping similar hotels
-        negative_keywords = scrape_similar_hotels(url, header_text) if header_text else []
+        negative_keywords = scrape_similar_hotels("https://www.google.com/search", header_text) if header_text else []
  
  
         # Creating DataFrames for each piece of data
