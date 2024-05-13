@@ -173,33 +173,27 @@ def scrape_site_links(url, max_links=8):
  
 def scrape_similar_hotels(url, header_text):
     try:
-        print("Fetching similar hotels...")
+        # Fetch the HTML content of the webpage
         response = requests.get(url)
         response.raise_for_status()  # Raise an exception for bad requests
 
         # Parse the HTML content
         soup = BeautifulSoup(response.text, 'html.parser')
+
+        # Find similar hotels information based on header text
+        search_results = soup.find_all('div', class_='hrZZ8d')
+
         negative_keywords = []
+        for result in search_results:
+            negative_keywords.append(result.text)
 
-        # Find all relevant div elements with class 'hrZZ8d'
-        div_elements = soup.find_all('div', class_='hrZZ8d')
-
-        # Iterate over div elements to extract related information
-        for div in div_elements:
-            # Check if the header text is present in the div content
-            if header_text.lower() in div.get_text().lower():
-                negative_keywords.append(div.get_text().strip())
-
+        print("Negative Keywords:", negative_keywords)
         return negative_keywords
 
     except Exception as e:
-        print("An error occurred while scraping negative_keywords:", e)
+        print("An error occurred while scraping similar hotels:", e)
         return None
 
-
-
- 
-   
 # Define a function to handle timeouts
 def timeout_handler():
     raise TimeoutException("Fetching amenities took too long")
