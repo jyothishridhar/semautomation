@@ -212,7 +212,7 @@ try:
         print("No related information found.")
 
 except Exception as e:
-    print("An error occurred:", e)
+    print("An error occurre:", e)
 
 
 
