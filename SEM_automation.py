@@ -185,9 +185,11 @@ def scrape_similar_hotels(google_url, header_text):
         response = requests.get(google_url)
         response.raise_for_status() 
         soup = BeautifulSoup(response.text, 'html.parser')
+        all_text = soup.get_text()
         
         # Find all search result divs
-        search_results = soup.find_all('div', class_='tF2Cxc')
+        search_results = all_text.find_all('div', class_='tF2Cxc')
+        print("search_results",search_results)
         
         negative_keywords = []
         for result in search_results:
