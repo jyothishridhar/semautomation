@@ -188,38 +188,31 @@ def scrape_site_links(url, max_links=8):
 def scrape_similar_hotels(google_url, header_text):
     try:
         print("Fetching similar hotels...")
+        options = Options()
         driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
         driver.get(google_url)
-
-        # Wait for the search box to be visible
-        search_box = WebDriverWait(driver, 10).until(
-            EC.visibility_of_element_located((By.XPATH, "//textarea[@id='APjFqb' and @name='q']"))
-        )
+        time.sleep(2)
+ 
+        search_box = driver.find_element(By.XPATH, "//textarea[@id='APjFqb' and @name='q']")
         search_box.send_keys(header_text)
         search_box.send_keys(Keys.RETURN)
-
-        # Wait for search results to be present
-        WebDriverWait(driver, 10).until(
-            EC.presence_of_element_located((By.XPATH, "//div[@class='hrZZ8d']"))
-        )
-
-        # Extract search results
+        time.sleep(10)
+ 
         search_results = driver.find_elements(By.XPATH, "//div[@class='hrZZ8d']")
-
+ 
         negative_keywords = []
         for result in search_results:
             negative_keywords.append(result.text)
-
+ 
         # Close the browser
         driver.quit()
-
+ 
         print("Negative Keywords:", negative_keywords)
         return negative_keywords
-
+ 
     except Exception as e:
         print("An error occurred while scraping similar hotels:", e)
         return None
-
  
    
 # Define a function to handle timeouts
