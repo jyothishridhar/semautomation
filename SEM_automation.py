@@ -171,15 +171,21 @@ def scrape_site_links(url, max_links=8):
         return None
  
  
-def scrape_similar_hotels(google_url):
+def scrape_similar_hotels(google_url, header_text):
     try:
         print("Fetching similar hotels...")
-        # Parse the HTML content
+        # Construct the Google search URL with the header text
+        search_query = "+".join(header_text.split())  # Convert header text to a valid search query
+        google_url = f"https://www.google.com/search?q={search_query}"
+        
+        # Fetch the HTML content of the search results page
         response = requests.get(google_url)
         response.raise_for_status() 
         soup = BeautifulSoup(response.text, 'html.parser')
+        
         # Find all search result divs
         search_results = soup.find_all('div', class_='hrZZ8d')
+        
         negative_keywords = []
         for result in search_results:
             # Extract text from the div
@@ -191,7 +197,6 @@ def scrape_similar_hotels(google_url):
     except Exception as e:
         print("An error occurred while scraping related information:", e)
         return None
-
 
 
         # service = Service(ChromeDriverManager().install())
@@ -404,7 +409,7 @@ if st.button("Scrape Data"):
         property_name_variants = generate_variants(header_text) if header_text else []
  
         # Scraping similar hotels
-        negative_keywords = scrape_similar_hotels("https://www.google.com/search?q=header_text", header_text) if header_text else []
+        negative_keywords = scrape_similar_hotels(header_text) if header_text else []
  
         # Creating DataFrames for each piece of data
         header_df = pd.DataFrame({'Header Text': [header_text] if header_text else []})
