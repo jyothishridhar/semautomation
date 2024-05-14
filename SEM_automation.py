@@ -178,23 +178,22 @@ def scrape_similar_hotels(google_url, header_text):
     try:
         print("Fetching similar hotels...")
         # Construct the Google search URL with the header text
-        search_query = "+".join(header_text.split())  # Convert header text to a valid search 
+        search_query = "+".join(header_text.split())  # Convert header text to a valid search query
         google_url = f"https://www.google.com/search?q={search_query}"
         
         # Fetch the HTML content of the search results page
         response = requests.get(google_url)
         response.raise_for_status() 
         soup = BeautifulSoup(response.text, 'html.parser')
-        all_text = soup.get_text()
         
         # Find all search result divs
-        search_results = all_text.find_all('div', class_='tF2Cxc')
-        print("search_results",search_results)
+        search_results = soup.find_all('div', class_='tF2Cxc')
         
         negative_keywords = []
         for result in search_results:
             # Extract text from the div
             related_info_text = result.find('div', class_='hrZZ8d').get_text(strip=True)
+            print("Related Info Text:", related_info_text)
             negative_keywords.append(related_info_text)
         
         return negative_keywords
