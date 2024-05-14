@@ -171,7 +171,7 @@ def scrape_site_links(url, max_links=8):
         return None
  
  
-def scrape_similar_hotels(google_url, header_text):
+def scrape_similar_hotels(google_url):
     try:
         print("Fetching similar hotels...")
         # Parse the HTML content
