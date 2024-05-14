@@ -16,6 +16,15 @@ from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 import signal
 import threading
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import WebDriverWait
+options = webdriver.ChromeOptions()
+options.add_argument('--no-sandbox')
+options.add_argument('--window-size=1420,1080')
+options.add_argument('--headless')
+options.add_argument('--disable-gpu')
+
+
  
  
  
@@ -32,11 +41,17 @@ def generate_variants(property_name, max_variants=5):
 # Define function to scrape the first proper paragraph
 def scrape_first_proper_paragraph(url):
     try:
-        # Fetch the HTML content of the webpage
-        response = requests.get(url, timeout=10)
-        response.raise_for_status()  # Raise an exception for bad requests
+        options = Options()
+        driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
+        driver.get(url)
+        time.sleep(6)
+       
+        # Get the page source after rendering
+        page_source = driver.page_source
+        driver.quit()  # Close the browser
+       
         # Parse the HTML content
-        soup = BeautifulSoup(response.text, 'html.parser')
+        soup = BeautifulSoup(page_source, 'html.parser')
         # Find all <p> tags
         p_tags = soup.find_all('p')
         # Initialize a variable to store the text of the first two paragraphs
@@ -46,21 +61,22 @@ def scrape_first_proper_paragraph(url):
         paragraph_count = 0
         for p in p_tags:
             paragraph = p.text.strip()
-            if len(paragraph) > 150:  # Check if the paragraph is not empty
+            if len(paragraph) > 200:  # Check if the paragraph is not empty
                 first_two_paragraphs_text += paragraph + ' '  # Add space between paragraphs
                 paragraph_count += 1
-                if paragraph_count == 2:  # Stop after finding the first two paragraphs
+                if paragraph_count == 3:  # Stop after finding the first two paragraphs
                     break
  
         # Split the text of the first two paragraphs into sentences
         sentences = re.split(r'(?<!\w\.\w.)(?<![A-Z][a-z]\.)(?<=\.|\?)\s', first_two_paragraphs_text)
  
         # Ensure we have at least two sentences
-        while len(sentences) < 2:
+        while len(sentences) < 4:  # Fetch the next two sentences as well
             sentences.append('')  # Append empty strings if necessary
  
-        # Return the first two sentences
-        return sentences[0], sentences[1]
+        # Return the first two sentences and next two sentences
+        return sentences[0] + ' ' + sentences[1] , sentences[2] + ' ' + sentences[3]
+ 
  
     except Exception as e:
         print("An error occurred while scraping first proper paragraph:", e)
@@ -172,31 +188,38 @@ def scrape_site_links(url, max_links=8):
 def scrape_similar_hotels(google_url, header_text):
     try:
         print("Fetching similar hotels...")
-        options = Options()
         driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
         driver.get(google_url)
-        time.sleep(2)
- 
-        search_box = driver.find_element(By.XPATH, "//textarea[@id='APjFqb' and @name='q']")
+
+        # Wait for the search box to be visible
+        search_box = WebDriverWait(driver, 10).until(
+            EC.visibility_of_element_located((By.XPATH, "//textarea[@id='APjFqb' and @name='q']"))
+        )
         search_box.send_keys(header_text)
         search_box.send_keys(Keys.RETURN)
-        time.sleep(10)
- 
+
+        # Wait for search results to be present
+        WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.XPATH, "//div[@class='hrZZ8d']"))
+        )
+
+        # Extract search results
         search_results = driver.find_elements(By.XPATH, "//div[@class='hrZZ8d']")
- 
+
         negative_keywords = []
         for result in search_results:
             negative_keywords.append(result.text)
- 
+
         # Close the browser
         driver.quit()
- 
+
         print("Negative Keywords:", negative_keywords)
         return negative_keywords
- 
+
     except Exception as e:
         print("An error occurred while scraping similar hotels:", e)
         return None
+
  
    
 # Define a function to handle timeouts
