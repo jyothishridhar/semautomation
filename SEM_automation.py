@@ -16,6 +16,14 @@ from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 import signal
 import threading
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import WebDriverWait
+options = webdriver.ChromeOptions()
+options.add_argument('--no-sandbox')
+options.add_argument('--window-size=1420,1080')
+options.add_argument('--headless')
+options.add_argument('--disable-gpu')
+
 
  
 
@@ -171,59 +179,40 @@ def scrape_site_links(url, max_links=8):
         return None
  
  
-import requests
-from bs4 import BeautifulSoup
-import re
-
-def scrape_similar_hotels(header_text):
+def scrape_similar_hotels(google_url, header_text):
     try:
-        # Prepare the Google search URL with the header text
-        google_url = f"https://www.google.com/search?q=header_text"
-        
-        # Send a GET request to Google
-        response = requests.get(google_url)
-        response.raise_for_status()  # Raise an exception for bad requests
-        
-        # Parse the HTML content
-        soup = BeautifulSoup(response.text, 'html.parser')
-        
-        # Find all search result links
-        search_results = soup.find_all('div', class_='GtJDDb')
-        print("search_results",search_results)
-        
-        # Extract links and titles
-        links = []
+        print("Fetching similar hotels...")
+        driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
+        driver.get(google_url)
+
+        # Wait for the search box to be visible
+        search_box = WebDriverWait(driver, 10).until(
+            EC.visibility_of_element_located((By.XPATH, "//textarea[@id='APjFqb' and @name='q']"))
+        )
+        search_box.send_keys(header_text)
+        search_box.send_keys(Keys.RETURN)
+
+        # Wait for search results to be present
+        WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.XPATH, "//div[@class='hrZZ8d']"))
+        )
+
+        # Extract search results
+        search_results = driver.find_elements(By.XPATH, "//div[@class='hrZZ8d']")
+
+        negative_keywords = []
         for result in search_results:
-            # Find the div with class "hrZZ8d"
-            related_info_div = result.find('div', class_='hrZZ8d')
-            if related_info_div:
-                # Extract text from the div
-                related_info_text = related_info_div.get_text(strip=True)
-            else:
-                related_info_text = "No related information found"
-            
-            # Find the link tag
-            link_tag = result.find('a')
-            link_url = link_tag.get('href')
-            link_title = link_tag.find('h3').text
-            links.append((link_title, link_url, related_info_text))
-        
-        return links
-        
+            negative_keywords.append(result.text)
+
+        # Close the browser
+        driver.quit()
+
+        print("Negative Keywords:", negative_keywords)
+        return negative_keywords
+
     except Exception as e:
-        print("An error occurred while scraping related links:", e)
+        print("An error occurred while scraping similar hotels:", e)
         return None
-
-# # Example usage
-# header_text = "Westgate Lakes Resort and Spa"
-# related_links = scrape_related_links(header_text)
-# if related_links:
-#     for title, url in related_links:
-#         print(title, ":", url)
-
-
-
-
 
 
 # Define a function to handle timeouts
@@ -375,24 +364,6 @@ url = st.text_input("Enter URL")
 output_file = st.text_input("Enter Header")
  
 if st.button("Scrape Data"):
-
-    # if st.button("Scrape Related Information"):
-    #     if header_text:
-    #         # Scrape information from Google search results
-    #         negative_keywords = scrape_information_from_google(header_text)
-            
-    #         # Display the scraped information
-    #         if negative_keywords:
-    #             st.success("Related Information:")
-    #             for info in negative_keywords:
-    #                 st.write(info)
-    #         else:
-    #             st.warning("No related information found.")
-    #     else:
-    #         st.warning("Please enter a header text.")
-
-
-
     if url:
  
         ad_copy1, ad_copy2 = scrape_first_proper_paragraph(url)
@@ -428,7 +399,7 @@ if st.button("Scrape Data"):
         property_name_variants = generate_variants(header_text) if header_text else []
  
         # Scraping similar hotels
-        negative_keywords = scrape_similar_hotels(header_text)
+        negative_keywords = scrape_similar_hotels("https://www.google.com", header_text) if header_text else []
  
  
         # Creating DataFrames for each piece of data
