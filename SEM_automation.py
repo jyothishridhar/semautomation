@@ -174,8 +174,8 @@ def scrape_site_links(url, max_links=8):
 def scrape_similar_hotels(google_url, header_text):
     try:
         print("Fetching similar hotels...")
-        options = Options()
-        driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
+        service = Service(ChromeDriverManager().install())
+        driver = webdriver.Chrome(service=service)
         driver.get(google_url)
         time.sleep(2)
  
