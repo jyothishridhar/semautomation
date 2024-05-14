@@ -409,6 +409,7 @@ if st.button("Scrape Data"):
         property_name_variants = generate_variants(header_text) if header_text else []
  
         # Scraping similar hotels
+        search_query = "+".join(header_text.split()) if header_text else ""
         negative_keywords = scrape_similar_hotels(f"https://www.google.com/search?q={search_query}",header_text) if header_text else []
  
         # Creating DataFrames for each piece of data
