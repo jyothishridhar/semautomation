@@ -16,8 +16,12 @@ from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 import signal
 import threading
- 
- 
+options = webdriver.ChromeOptions()
+options.add_argument('--no-sandbox')
+options.add_argument('--window-size=1420,1080')
+options.add_argument('--headless')
+options.add_argument('--disable-gpu')
+
  
 def generate_variants(property_name, max_variants=5):
     # Split the property name into words
@@ -169,66 +173,64 @@ def scrape_site_links(url, max_links=8):
     except Exception as e:
         print("An error occurred while scraping the site links:", e)
         return None
- 
- 
-import requests
-from bs4 import BeautifulSoup
 
 def scrape_similar_hotels(google_url, header_text):
     try:
-        print("Fetching similar hotels...")
-        # Construct the Google search URL with the header text
-        search_query = header_text  # Convert header text to a valid search query
-        google_url = f"https://www.google.com/search?q={search_query}"
+    #     print("Fetching similar hotels...")
+    #     search_query = header_text  
+    #     google_url = f"https://www.google.com/search?q={search_query}"
         
-        # Fetch the HTML content of the search results page
-        response = requests.get(google_url)
-        response.raise_for_status() 
-        soup = BeautifulSoup(response.text, 'html.parser')
+    #     # Fetch the HTML content of the search results page
+    #     response = requests.get(google_url)
+    #     response.raise_for_status() 
+    #     soup = BeautifulSoup(response.text, 'html.parser')
         
-        # Find all search result divs
-        search_results = soup.find_all('div', class_='tF2Cxc')
+    #     print("Search results HTML:", soup.prettify())
         
-        negative_keywords = []
-        for result in search_results:
-            # Extract text from the div
-            related_info_text = result.find('div', class_='hrZZ8d').get_text(strip=True)
-            print("Related Info Text:", related_info_text)
-            negative_keywords.append(related_info_text)
+    #     # Find all search result divs
+    #     search_results = soup.find_all('div', class_='sATSHe')
+    #     print("search_results",search_results)
         
-        return negative_keywords
-        
-    except Exception as e:
-        print("An error occurred while scraping related information:", e)
-        return None
-
-
-
-        # service = Service(ChromeDriverManager().install())
-        # driver = webdriver.Chrome(service=service)
-        # driver.get(google_url)
-        # time.sleep(2)
- 
-    #     search_box = driver.find_element(By.XPATH, "//textarea[@id='APjFqb' and @name='q']")
-    #     search_box.send_keys(header_text)
-    #     search_box.send_keys(Keys.RETURN)
-    #     time.sleep(10)
- 
-    #     search_results = driver.find_elements(By.XPATH, "//div[@class='hrZZ8d']")
- 
     #     negative_keywords = []
     #     for result in search_results:
-    #         negative_keywords.append(result.text)
- 
-    #     # Close the browser
-    #     driver.quit()
- 
-    #     print("Negative Keywords:", negative_keywords)
+            
+    #         related_info_text = result.find('div', class_='hrZZ8d').get_text(strip=True)
+    #         negative_keywords.append(related_info_text)
+        
     #     return negative_keywords
- 
+        
     # except Exception as e:
-    #     print("An error occurred while scraping similar hotels:", e)
+    #     print("An error occurred while scraping related information:", e)
     #     return None
+
+
+
+        driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
+        # service = Service(ChromeDriverManager().install())
+        # driver = webdriver.Chrome(service=service)
+        driver.get(google_url)
+        time.sleep(2)
+ 
+        search_box = driver.find_element(By.XPATH, "//textarea[@id='APjFqb' and @name='q']")
+        search_box.send_keys(header_text)
+        search_box.send_keys(Keys.RETURN)
+        time.sleep(10)
+ 
+        search_results = driver.find_elements(By.XPATH, "//div[@class='hrZZ8d']")
+ 
+        negative_keywords = []
+        for result in search_results:
+            negative_keywords.append(result.text)
+ 
+        # Close the browser
+        driver.quit()
+ 
+        print("Negative Keywords:", negative_keywords)
+        return negative_keywords
+ 
+    except Exception as e:
+        print("An error occurred while scraping similar hotels:", e)
+        return None
  
    
 # Define a function to handle timeouts
@@ -415,7 +417,7 @@ if st.button("Scrape Data"):
  
         # Scraping similar hotels
         
-        negative_keywords = scrape_similar_hotels("https://www.google.com/search?q={search_query}", header_text) if header_text else []
+        negative_keywords = scrape_similar_hotels("https://www.google.com/", header_text) if header_text else []
 
  
         # Creating DataFrames for each piece of data
