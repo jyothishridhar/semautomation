@@ -16,17 +16,9 @@ from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 import signal
 import threading
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.support.ui import WebDriverWait
-options = webdriver.ChromeOptions()
-options.add_argument('--no-sandbox')
-options.add_argument('--window-size=1420,1080')
-options.add_argument('--headless')
-options.add_argument('--disable-gpu')
-
-
  
-
+ 
+ 
 def generate_variants(property_name, max_variants=5):
     # Split the property name into words
     words = property_name.split()
@@ -40,12 +32,17 @@ def generate_variants(property_name, max_variants=5):
 # Define function to scrape the first proper paragraph
 def scrape_first_proper_paragraph(url):
     try:
-        # Fetch the HTML content of the webpage
-        response = requests.get(url, timeout=10)
-        response.raise_for_status()  # Raise an exception for bad requests
-        
+        options = Options()
+        driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
+        driver.get(url)
+        time.sleep(6)
+       
+        # Get the page source after rendering
+        page_source = driver.page_source
+        driver.quit()  # Close the browser
+       
         # Parse the HTML content
-        soup = BeautifulSoup(response.text, 'html.parser')
+        soup = BeautifulSoup(page_source, 'html.parser')
         # Find all <p> tags
         p_tags = soup.find_all('p')
         # Initialize a variable to store the text of the first two paragraphs
@@ -58,7 +55,7 @@ def scrape_first_proper_paragraph(url):
             if len(paragraph) > 200:  # Check if the paragraph is not empty
                 first_two_paragraphs_text += paragraph + ' '  # Add space between paragraphs
                 paragraph_count += 1
-                if paragraph_count == 2:  # Stop after finding the first two paragraphs
+                if paragraph_count == 3:  # Stop after finding the first two paragraphs
                     break
  
         # Split the text of the first two paragraphs into sentences
@@ -182,54 +179,48 @@ def scrape_site_links(url, max_links=8):
 def scrape_similar_hotels(google_url, header_text):
     try:
         print("Fetching similar hotels...")
+        options = Options()
         driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
         driver.get(google_url)
-
-        # Wait for the search box to be visible
-        search_box = WebDriverWait(driver, 10).until(
-            EC.visibility_of_element_located((By.XPATH, "//textarea[@id='APjFqb' and @name='q']"))
-        )
+        time.sleep(2)
+ 
+        search_box = driver.find_element(By.XPATH, "//textarea[@id='APjFqb' and @name='q']")
         search_box.send_keys(header_text)
         search_box.send_keys(Keys.RETURN)
-
-        # Wait for search results to be present
-        WebDriverWait(driver, 10).until(
-            EC.presence_of_element_located((By.XPATH, "//div[@class='hrZZ8d']"))
-        )
-
-        # Extract search results
+        time.sleep(10)
+ 
         search_results = driver.find_elements(By.XPATH, "//div[@class='hrZZ8d']")
-
+ 
         negative_keywords = []
         for result in search_results:
             negative_keywords.append(result.text)
-
+ 
         # Close the browser
         driver.quit()
-
+ 
         print("Negative Keywords:", negative_keywords)
         return negative_keywords
-
+ 
     except Exception as e:
         print("An error occurred while scraping similar hotels:", e)
         return None
-
-
+ 
+   
 # Define a function to handle timeouts
 def timeout_handler():
     raise TimeoutException("Fetching amenities took too long")
-
+ 
 # Define a custom exception for timeout
 class TimeoutException(Exception):
     pass
-
+ 
 def scrape_amenities(url):
     try:
         # Check if the URL is a tel: or mailto: link
         if url.startswith(('tel:', 'mailto:')):
             print("Skipping URL:", url)
             return []
-
+ 
         # Fetch the HTML content of the webpage with a timeout
         response = requests.get(url, timeout=60)  # Set the timeout directly here
         response.raise_for_status()  # Raise an exception for non-HTTP or non-HTTPS URLs
@@ -244,12 +235,12 @@ def scrape_amenities(url):
                 found_amenities.append(amenity)
         print("found_amenities", found_amenities)
         return found_amenities[:8]
-
+ 
     except Exception as e:
         print(f"An error occurred while scraping amenities from url {url}: {e}")
         return []
-
-
+ 
+ 
 # Define the list of amenities to check for
 amenities_to_check = [
     "Swimming Pool",
@@ -280,8 +271,8 @@ amenities_to_check = [
     "Lift",
     "Iron & Ironing Board"
 ]
-
-
+ 
+ 
 def fetch_amenities_from_links(site_links):
     amenities_found = []
     for link_url, _ in site_links:
@@ -295,7 +286,7 @@ def fetch_amenities_from_links(site_links):
    
 import requests
 from requests.exceptions import Timeout
-
+ 
 def fetch_amenities_from_sub_links(site_links, max_sub_links=4, timeout=10):
     amenities_found = set()
    
@@ -304,7 +295,7 @@ def fetch_amenities_from_sub_links(site_links, max_sub_links=4, timeout=10):
             # Fetch amenities from the current link with a specified timeout
             response = requests.get(link_url, timeout=timeout)
             response.raise_for_status()  # Raise an exception for bad requests
-            
+           
             # If the response is successful, proceed with scraping amenities
             amenities = scrape_amenities(link_url)
             if amenities:
@@ -320,7 +311,7 @@ def fetch_amenities_from_sub_links(site_links, max_sub_links=4, timeout=10):
                 unique_urls = set()
                 # List to store the found sub links
                 sub_links = []
-
+ 
                 # Loop through anchor tags and extract sub-links
                 for a in anchor_tags:
                     sub_link_url = a['href']
@@ -330,7 +321,7 @@ def fetch_amenities_from_sub_links(site_links, max_sub_links=4, timeout=10):
                         sub_links.append(sub_link_url)
                         if len(sub_links) >= max_sub_links:
                             break
-
+ 
                 # Fetch amenities from subsequent links
                 for sub_link_url in sub_links:
                     # Use the same timeout for sub-links
@@ -338,10 +329,10 @@ def fetch_amenities_from_sub_links(site_links, max_sub_links=4, timeout=10):
                     if sub_link_amenities:
                         amenities_found.update(sub_link_amenities)
                         max_sub_links -= 1  # Decrement the count of sub-links processed
-
+ 
                 # Update the count of remaining sub-links
                 max_sub_links -= len(sub_links)
-
+ 
                 # If there are no more subsequent links to process, break the loop
                 if max_sub_links <= 0:
                     break
@@ -354,13 +345,12 @@ def fetch_amenities_from_sub_links(site_links, max_sub_links=4, timeout=10):
             print(f"An error occurred while fetching amenities from sub-link {link_url}: {e}")
    
     return list(amenities_found)[:8]
-
+ 
 # Streamlit app code
 st.title("SEM Creation Template")
 # Input URL field
 url = st.text_input("Enter URL")
-# # Input for output file path
-# header_text = st.text_input("Enter Header Text")
+# Input for output file path
 output_file = st.text_input("Enter Header")
  
 if st.button("Scrape Data"):
@@ -381,7 +371,7 @@ if st.button("Scrape Data"):
         all_amenities = amenities_found + amenities_from_links + amenities_from_sub_links
         # Ensure we have at most 8 unique amenities
         unique_amenities = list(set(all_amenities))[:8]
-
+ 
         # Continue fetching amenities until we have less than 8 but more than 4, or after checking 10 sub-links
         sub_links_processed = 0
         while 4 < len(unique_amenities) < 8 and len(site_links) > 0 and sub_links_processed < 10:
@@ -392,7 +382,7 @@ if st.button("Scrape Data"):
             sub_links_processed += max_sub_links  # Update the number of sub-links processed
             if sub_links_processed >= 10:
                 break  # Break out of the loop after checking 10 sub-links
-
+ 
         # Display the fetched amenities
         st.write("Fetched Amenities:", unique_amenities)
         # Generate property name variants
@@ -400,7 +390,6 @@ if st.button("Scrape Data"):
  
         # Scraping similar hotels
         negative_keywords = scrape_similar_hotels("https://www.google.com", header_text) if header_text else []
- 
  
         # Creating DataFrames for each piece of data
         header_df = pd.DataFrame({'Header Text': [header_text] if header_text else []})
