@@ -33,7 +33,7 @@ def generate_variants(property_name, max_variants=5):
 def scrape_first_proper_paragraph(url):
     try:
         response = requests.get(url, timeout=10)
-        
+
         response.raise_for_status()  # Raise an exception for bad requests
         # Parse the HTML content
         soup = BeautifulSoup(response.text, 'html.parser')
