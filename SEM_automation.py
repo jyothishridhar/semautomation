@@ -178,7 +178,7 @@ def scrape_similar_hotels(google_url, header_text):
     try:
         print("Fetching similar hotels...")
         # Construct the Google search URL with the header text
-        search_query = "+".join(header_text.split())  # Convert header text to a valid search query
+        search_query = "+".join(header_text.split())  # Convert header text to a valid search 
         google_url = f"https://www.google.com/search?q={search_query}"
         
         # Fetch the HTML content of the search results page
