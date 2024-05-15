@@ -204,9 +204,9 @@ def scrape_similar_hotels(google_url, header_text):
 
 
 
-        driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
-        # service = Service(ChromeDriverManager().install())
-        # driver = webdriver.Chrome(service=service)
+        # driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
+        service = Service(ChromeDriverManager().install())
+        driver = webdriver.Chrome(service=service)
         driver.get(google_url)
         time.sleep(2)
  
