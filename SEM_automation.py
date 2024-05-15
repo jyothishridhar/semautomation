@@ -379,7 +379,7 @@ url = st.text_input("Enter URL")
 # Input for output file path
 output_file = st.text_input("Enter Header")
  
-if st.write("Scrape Data"):
+if st.button("Scrape Data"):
     if url:
  
         ad_copy1, ad_copy2 = scrape_first_proper_paragraph(url)
