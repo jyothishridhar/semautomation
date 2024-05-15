@@ -6,5 +6,4 @@ selenium
 openpyxl
 fsspec
 streamlit
-chromium
-chromium-driver
+
