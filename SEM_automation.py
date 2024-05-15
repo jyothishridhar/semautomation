@@ -175,7 +175,7 @@ def scrape_site_links(url, max_links=8):
 
 def scrape_similar_hotels(google_url, header_text):
     try:
-    #     print("Fetching similar hotels...")
+        print("Fetching similar hotels...")
     #     search_query = header_text  
     #     google_url = f"https://www.google.com/search?q={search_query}"
         
