@@ -1,2 +1,4 @@
 web: setup.bat && streamlit run SEM_automation.py
+chromium
+chromium-driver
 

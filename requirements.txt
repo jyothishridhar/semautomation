@@ -5,5 +5,5 @@ selenium
 openpyxl
 fsspec
 streamlit
-webdriver_manager
+
 
