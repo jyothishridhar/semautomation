@@ -1,2 +1,1 @@
 web: setup.bat && streamlit run SEM_automation.py
-webdriver_manager
