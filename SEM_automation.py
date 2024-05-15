@@ -379,7 +379,7 @@ url = st.text_input("Enter URL")
 # Input for output file path
 output_file = st.text_input("Enter Header")
  
-if st.button("Scrape Data"):
+if st.write("Scrape Data"):
     if url:
  
         ad_copy1, ad_copy2 = scrape_first_proper_paragraph(url)
@@ -417,8 +417,8 @@ if st.button("Scrape Data"):
         # Scraping similar hotels
         
         negative_keywords = scrape_similar_hotels("https://www.google.com/", header_text) if header_text else []
+        st.write("negative_keywords:", negative_keywords)
 
- 
         # Creating DataFrames for each piece of data
         header_df = pd.DataFrame({'Header Text': [header_text] if header_text else []})
         paragraph_df = pd.DataFrame({'Ad copy1': [ad_copy1], 'Ad copy2': [ad_copy2]})
