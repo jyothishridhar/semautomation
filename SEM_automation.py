@@ -188,16 +188,16 @@ from urllib.parse import urlencode
 from bs4 import BeautifulSoup
 import streamlit as st
 
-async def fetch_content(query):
+async def fetch_content(header_text):
     session = AsyncHTMLSession()
-    google_url = f"https://www.google.com/search?{urlencode({'q': query})}"
+    google_url = f"https://www.google.com/search?{urlencode({'q': header_text})}"
     response = await session.get(google_url)
     await response.html.arender()
     return response
 
 async def main(websocket, path):
-    async for query in websocket:
-        response = await fetch_content(query)
+    async for header_text in websocket:
+        response = await fetch_content(header_text)
         soup = await scrape_similar_hotels(response)
         await websocket.send(soup)
 
@@ -206,13 +206,13 @@ async def scrape_similar_hotels(response):
     # Parse the HTML content with BeautifulSoup and extract information
     return soup
 
-def run_server():
-    start_server = websockets.serve(main, "localhost", 8765)
-    asyncio.get_event_loop().run_until_complete(start_server)
-    asyncio.get_event_loop().run_forever()
+# def run_server():
+#     start_server = websockets.serve(main, "localhost", 8765)
+#     asyncio.get_event_loop().run_until_complete(start_server)
+#     asyncio.get_event_loop().run_forever()
 
-if __name__ == "__main__":
-    run_server()
+# if __name__ == "__main__":
+#     run_server()
 
     #     driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
     #     # service = Service(ChromeDriverManager().install())
