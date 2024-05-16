@@ -3,7 +3,7 @@ import pandas as pd
 import os
 import requests
 from bs4 import BeautifulSoup
-from urllib.parse import urljoin
+from urllib.parse import urljoin, urlencode
 import re
 from itertools import permutations
 from selenium import webdriver
@@ -28,6 +28,8 @@ from requests_html import HTMLSession
 import asyncio
 from requests_html import AsyncHTMLSession
 import pyppeteer
+import websockets
+
 
 def generate_variants(property_name, max_variants=5):
     # Split the property name into words
@@ -36,9 +38,10 @@ def generate_variants(property_name, max_variants=5):
     word_permutations = permutations(words)
     # Join permutations to form variant names
     variants = [' '.join(perm) for i, perm in enumerate(word_permutations) if i < max_variants]
- 
+
     return variants
- 
+
+
 # Define function to scrape the first proper paragraph
 def scrape_first_proper_paragraph(url):
     try:
@@ -51,8 +54,7 @@ def scrape_first_proper_paragraph(url):
         p_tags = soup.find_all('p')
         # Initialize a variable to store the text of the first two paragraphs
         first_two_paragraphs_text = ''
-       
- 
+
         # Find the text of the first two proper paragraphs
         paragraph_count = 0
         for p in p_tags:
@@ -62,22 +64,22 @@ def scrape_first_proper_paragraph(url):
                 paragraph_count += 1
                 if paragraph_count == 3:  # Stop after finding the first two paragraphs
                     break
- 
+
         # Split the text of the first two paragraphs into sentences
         sentences = re.split(r'(?<!\w\.\w.)(?<![A-Z][a-z]\.)(?<=\.|\?)\s', first_two_paragraphs_text)
- 
+
         # Ensure we have at least two sentences
         while len(sentences) < 4:  # Fetch the next two sentences as well
             sentences.append('')  # Append empty strings if necessary
- 
+
         # Return the first two sentences and next two sentences
-        return sentences[0] + ' ' + sentences[1] , sentences[2] + ' ' + sentences[3]
- 
- 
+        return sentences[0] + ' ' + sentences[1], sentences[2] + ' ' + sentences[3]
+
     except Exception as e:
         print("An error occurred while scraping first proper paragraph:", e)
         return None, None
-   
+
+
 def extract_header_from_path(output_file):
     try:
         # Extract filename from the path
@@ -86,31 +88,32 @@ def extract_header_from_path(output_file):
         filename_without_extension = os.path.splitext(filename)[0]
         # Replace underscores with spaces
         header_text = filename_without_extension.replace('_', ' ')
- 
+
         return header_text.strip()
- 
+
     except Exception as e:
         print("An error occurred while extracting header from file path:", e)
         return None
- 
+
+
 def scrape_site_links(url, max_links=8):
     try:
         # Fetch the HTML content of the webpage
         response = requests.get(url)
         response.raise_for_status()  # Raise an exception for bad requests
- 
+
         # Parse the HTML content
         soup = BeautifulSoup(response.text, 'html.parser')
- 
+
         # Find all anchor (a) tags
         anchor_tags = soup.find_all('a')
- 
+
         # Set to store unique URLs
         unique_urls = set()
- 
+
         # List to store the found site links
         site_links = []
- 
+
         # Define patterns to match variations in link text
         link_text_patterns = [
             "Official\s?Site",
@@ -134,75 +137,73 @@ def scrape_site_links(url, max_links=8):
             "Accommodations",
             "Contact Us"
         ]
- 
+
         # Relevant words related to water activities
-        relevant_water_words = ["swimming pool", "Water Park", "pool", "sea","Salt Water Swimming Pool","Pool & sea"]
- 
+        relevant_water_words = ["swimming pool", "Water Park", "pool", "sea", "Salt Water Swimming Pool", "Pool & sea"]
+
         # Compile regex pattern for link text
         link_text_pattern = re.compile('|'.join(link_text_patterns), re.IGNORECASE)
- 
+
         # Loop through all anchor tags and extract links with specific text
         for a in anchor_tags:
             # Get the text of the anchor tag, stripped of leading and trailing whitespace
             link_text = a.get_text(strip=True)
-            print("link_text",link_text)
- 
+            print("link_text", link_text)
+
             # Check if the link text matches any of the desired site links
             if link_text_pattern.search(link_text):
                 # Extract the href attribute to get the link URL
                 link_url = a.get('href')
- 
+
                 # Complete relative URLs if necessary
                 link_url = urljoin(url, link_url)
- 
+
                 # Add the URL to the set of unique URLs
                 if link_url not in unique_urls:
                     unique_urls.add(link_url)
- 
+
                     # Check if any of the specified words are present in the link text
                     if any(word in link_text.lower() for word in relevant_water_words):
- 
+
                         # Add "Water park" to the Callouts column instead of Link Text
-                        site_links.append((link_url, link_text +" (Water park)"))
- 
+                        site_links.append((link_url, link_text + " (Water park)"))
+
                     else:
                         # Append both link URL and link text
                         site_links.append((link_url, link_text))
- 
+
                     # Break the loop if the maximum number of links is reached
                     if len(site_links) >= max_links:
                         break
- 
- 
+
         return site_links
- 
+
     except Exception as e:
         print("An error occurred while scraping the site links:", e)
         return None
 
 
-import asyncio
-import websockets
-from requests_html import AsyncHTMLSession
-from urllib.parse import urlencode
-from bs4 import BeautifulSoup
-
-
-def fetch_content(header_text, websocket):
+async def fetch_content(header_text):
     try:
         session = AsyncHTMLSession()
         google_url = f"https://www.google.com/search?{urlencode({'q': header_text})}"
         response = await session.get(google_url)
         await response.html.arender()
         negative_keywords = await scrape_similar_hotels(response)  # Pass response as an argument
-        await websocket.send(negative_keywords)
+        return negative_keywords
     except Exception as e:
         print(f"An error occurred while fetching content: {e}")
-        await websocket.send("An error occurred while fetching content")
+        return None
+
 
 async def main(websocket, path):
     async for header_text in websocket:
-        await fetch_content(header_text, websocket)
+        async with AsyncHTMLSession() as session:
+            google_url = f"https://www.google.com/search?{urlencode({'q': header_text})}"
+            response = await session.get(google_url)
+            await response.html.arender()
+            negative_keywords = await fetch_content(header_text)  # Await the result of fetch_content
+            await websocket.send(negative_keywords)
 
 
 async def scrape_similar_hotels(response):
@@ -215,13 +216,16 @@ async def scrape_similar_hotels(response):
         negative_keywords.append(related_info_text)
     return negative_keywords
 
+
 def run_server():
     start_server = websockets.serve(main, "localhost", 8765)
     asyncio.get_event_loop().run_until_complete(start_server)
     asyncio.get_event_loop().run_forever()
 
+
 if __name__ == "__main__":
     run_server()
+
 
 # def run_server():
 #     start_server = websockets.serve(main, "localhost", 8765)
