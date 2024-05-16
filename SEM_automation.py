@@ -412,7 +412,7 @@ if st.button("Scrape Data"):
     if url:
 
         header_text = extract_header_from_path(output_file) if output_file else None
-        negative_keywords = fetch_content(header_text)  # Await the result of fetch_content
+        negative_keywords = await fetch_content(header_text)  # Await the result of fetch_content
         if negative_keywords:
             st.write("Negative Keywords:", negative_keywords)
         else:
