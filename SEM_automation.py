@@ -180,6 +180,9 @@ def scrape_site_links(url, max_links=8):
         return None
 
 
+import streamlit as st
+from requests_html import AsyncHTMLSession
+
 async def fetch_content(google_url):
     session = AsyncHTMLSession()
 
@@ -194,12 +197,12 @@ def scrape_similar_hotels(response):
 
     return soup
 
-def main():
+async def main():
     header_text = "your_header_text"
     google_url = f"https://www.google.com/search?q={header_text}"
     
     # Fetch content asynchronously
-    response = fetch_content(google_url)
+    response = await fetch_content(google_url)
 
     # Run the Streamlit app
     st.write("Fetching similar hotels...")
@@ -207,16 +210,14 @@ def main():
     soup.write("Loading...")
 
     # Process the response
-    response = response.result()
     soup_content = scrape_similar_hotels(response)
 
     # Display the processed content
     soup.write(soup_content)
 
 if __name__ == "__main__":
-    main()
-    
-
+    import asyncio
+    asyncio.run(main())
 
 
     #     driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
