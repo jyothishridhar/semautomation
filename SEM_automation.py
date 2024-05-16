@@ -323,30 +323,20 @@ def fetch_amenities_from_sub_links(site_links, max_sub_links=4, timeout=10):
     return list(amenities_found)[:8]    
 
 
-async def fetch_content(header_text):
+def fetch_content(header_text):
     try:
-        session = AsyncHTMLSession()
+        session = HTMLSession()
         google_url = f"https://www.google.com/search?{urlencode({'q': header_text})}"
-        response = await session.get(google_url)
-        await response.html.arender()
-        negative_keywords = await scrape_similar_hotels(response)  # Pass response as an argument
+        response = session.get(google_url)
+        response.html.render()
+        negative_keywords = scrape_similar_hotels(response)  # Pass response as an argument
         return negative_keywords
     except Exception as e:
         print(f"An error occurred while fetching content: {e}")
         return None
 
 
-async def main(websocket, path):
-    async for header_text in websocket:
-        async with AsyncHTMLSession() as session:
-            google_url = f"https://www.google.com/search?{urlencode({'q': header_text})}"
-            response = await session.get(google_url)
-            await response.html.arender()
-            negative_keywords = await fetch_content(header_text)  # Await the result of fetch_content
-            await websocket.send(negative_keywords)
-
-
-async def scrape_similar_hotels(response):
+def scrape_similar_hotels(response):
     soup = response.html.raw_html
     # Find all search result divs
     search_results = soup.find_all('div', class_='GtJDDb')
@@ -357,7 +347,7 @@ async def scrape_similar_hotels(response):
     return negative_keywords
 
 
-async def scrape_and_fetch_data(url, output_file):
+def scrape_and_fetch_data(url, output_file):
     ad_copy1, ad_copy2 = scrape_first_proper_paragraph(url)
     header_text = extract_header_from_path(output_file) if output_file else None
 
@@ -388,18 +378,18 @@ async def scrape_and_fetch_data(url, output_file):
     # Display the fetched amenities
     print("Fetched Amenities:", unique_amenities)
 
-    negative_keywords = await fetch_content(header_text)  # Await the result of fetch_content
+    negative_keywords = fetch_content(header_text)  # Await the result of fetch_content
     return ad_copy1, ad_copy2, header_text, amenities_found, site_links, negative_keywords, unique_amenities
 
 
-async def main():
+def main():
     url = st.text_input("Enter URL")
     output_file = st.text_input("Enter Header")
 
     if st.button("Scrape Data"):
         if url:
             ad_copy1, ad_copy2, header_text, amenities_found, site_links, negative_keywords, unique_amenities = \
-                await scrape_and_fetch_data(url, output_file)
+                scrape_and_fetch_data(url, output_file)
             if negative_keywords:
                 st.write("Negative Keywords:", negative_keywords)
             else:
@@ -408,21 +398,8 @@ async def main():
             st.warning("Please enter a URL.")
 
 
-async def scrape_similar_hotels(response):
-    soup = response.html.raw_html
-    # Find all search result divs
-    search_results = soup.find_all('div', class_='GtJDDb')
-    negative_keywords = []
-    for result in search_results:
-        related_info_text = result.find('div', class_='hrZZ8d').get_text(strip=True)
-        negative_keywords.append(related_info_text)
-    return negative_keywords
-
-
 def run_server():
-    start_server = websockets.serve(main, "localhost", 8765)
-    asyncio.get_event_loop().run_until_complete(start_server)
-    asyncio.get_event_loop().run_forever()
+    main()
 
 
 if __name__ == "__main__":
