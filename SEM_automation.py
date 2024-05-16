@@ -186,29 +186,24 @@ import websockets
 from requests_html import AsyncHTMLSession
 from urllib.parse import urlencode
 from bs4 import BeautifulSoup
-import streamlit as st
 
 
-async def fetch_content(header_text):
+def fetch_content(header_text, websocket):
     try:
         session = AsyncHTMLSession()
         google_url = f"https://www.google.com/search?{urlencode({'q': header_text})}"
         response = await session.get(google_url)
         await response.html.arender()
         negative_keywords = await scrape_similar_hotels(response)  # Pass response as an argument
-        return negative_keywords
+        await websocket.send(negative_keywords)
     except Exception as e:
         print(f"An error occurred while fetching content: {e}")
-        return None
+        await websocket.send("An error occurred while fetching content")
 
 async def main(websocket, path):
     async for header_text in websocket:
-        async with AsyncHTMLSession() as session:
-            google_url = f"https://www.google.com/search?{urlencode({'q': header_text})}"
-            response = await session.get(google_url)
-            await response.html.arender()
-            negative_keywords = await scrape_similar_hotels(response)  # Pass response as an argument
-            await websocket.send(negative_keywords)
+        await fetch_content(header_text, websocket)
+
 
 async def scrape_similar_hotels(response):
     soup = response.html.raw_html
@@ -219,11 +214,14 @@ async def scrape_similar_hotels(response):
         related_info_text = result.find('div', class_='hrZZ8d').get_text(strip=True)
         negative_keywords.append(related_info_text)
     return negative_keywords
-    # Parse the HTML content with BeautifulSoup and extract information
-    # return soup
 
-# 
+def run_server():
+    start_server = websockets.serve(main, "localhost", 8765)
+    asyncio.get_event_loop().run_until_complete(start_server)
+    asyncio.get_event_loop().run_forever()
 
+if __name__ == "__main__":
+    run_server()
 
 # def run_server():
 #     start_server = websockets.serve(main, "localhost", 8765)
@@ -505,3 +503,5 @@ if st.button("Scrape Data"):
  
 else:
     st.warning("Please enter a URL.")
+
+  
