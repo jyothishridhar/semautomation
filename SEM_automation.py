@@ -25,6 +25,7 @@ options.add_argument("--window-size=1920x1080")
 options.add_argument("--disable-features=VizDisplayCompositor")
 options.add_argument('--ignore-certificate-errors')
 from requests_html import HTMLSession
+import asyncio
 
 def generate_variants(property_name, max_variants=5):
     # Split the property name into words
@@ -177,29 +178,29 @@ def scrape_site_links(url, max_links=8):
         print("An error occurred while scraping the site links:", e)
         return None
 
-def scrape_similar_hotels(google_url, header_text):
-    try:
+async def scrape_similar_hotels(google_url, header_text):
+    
         print("Fetching similar hotels...")
         # Create an HTML session
         session = HTMLSession()
-        
+
         search_query = header_text  
         google_url = f"https://www.google.com/search?q={search_query}"
         
 
         # Fetch the HTML content of the search results page
-        response = session.get(google_url)
+        response = await session.get(google_url)
         response.raise_for_status() 
 
         # Render JavaScript to ensure all content is loaded
-        response.html.render()
+        await response.html.arender()
 
         # Use BeautifulSoup to parse the rendered HTML
         soup = response.html.raw_html
 
         print('soup',soup)
         
-        # print("Search results HTML:", soup.prettify())
+        print("Search results HTML:", soup.prettify())
         
         # Find all search result divs
         search_results = soup.find_all('div', class_='GtJDDb')
@@ -212,10 +213,11 @@ def scrape_similar_hotels(google_url, header_text):
             negative_keywords.append(related_info_text)
         
         return negative_keywords
+# Run the event loop to execute the asynchronous function
+loop = asyncio.get_event_loop()
+loop.run_until_complete(scrape_similar_hotels())
         
-    except Exception as e:
-        print("An error occurred while scraping related information:", e)
-        return None
+    
 
 
 
