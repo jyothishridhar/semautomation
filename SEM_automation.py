@@ -503,5 +503,5 @@ if st.button("Scrape Data"):
         # Display the DataFrame
         st.dataframe(df)
  
-    else:
-        st.warning("Please enter a URL.")
+else:
+    st.warning("Please enter a URL.")
