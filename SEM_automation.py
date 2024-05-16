@@ -184,6 +184,11 @@ def scrape_site_links(url, max_links=8):
 import streamlit as st
 from requests_html import AsyncHTMLSession
 
+import asyncio
+import streamlit as st
+from requests_html import AsyncHTMLSession
+import pyppeteer
+
 async def fetch_content(google_url):
     session = AsyncHTMLSession()
 
@@ -192,15 +197,9 @@ async def fetch_content(google_url):
     await response.html.arender()
     return response
 
-async def main():
-    header_text = "your_header_text"
+async def main(browser):
+    header_text = "grand inna medan"
     google_url = f"https://www.google.com/search?q={header_text}"
-    
-    # Specify the path to the Chromium executable
-    chromium_path = 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe'
-
-    # Launch Pyppeteer with the specified Chromium path
-    browser = await pyppeteer.launch(executablePath=chromium_path)
 
     # Fetch content asynchronously
     response = await fetch_content(google_url)
@@ -222,9 +221,17 @@ async def scrape_similar_hotels(response):
 
     return soup
 
-if __name__ == "__main__":
-    asyncio.run(main())
+async def launch_browser():
+    # Specify the path to the Chromium executable
+    chromium_path = 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe'
     
+    # Launch Pyppeteer with the specified Chromium path
+    return await pyppeteer.launch(executablePath=chromium_path)
+
+if __name__ == "__main__":
+    browser = asyncio.run(launch_browser())
+    asyncio.run(main(browser))
+
     #     driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
     #     # service = Service(ChromeDriverManager().install())
     #     # driver = webdriver.Chrome(service=service)
