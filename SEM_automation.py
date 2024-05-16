@@ -449,7 +449,11 @@ if st.button("Scrape Data"):
         site_links_df = pd.DataFrame(site_links, columns=['Link URL', 'Link Text'])
         property_url = pd.DataFrame({'property_url': [url]})
         property_name_variants_df = pd.DataFrame({'Variants of Property Name': property_name_variants})
-        negative_keywords_df = pd.DataFrame(negative_keywords, columns=['Negative Keywords'])
+        try:
+            negative_keywords_df = pd.DataFrame(negative_keywords, columns=['Negative Keywords'])
+            # Proceed with the rest of your code
+        except ValueError as ve:
+            print("Error creating DataFrame:", ve)
         amenities_df = pd.DataFrame({'Amenities': unique_amenities})
         Callouts = ["Book Direct", "Great Location", "Spacious Suites"]
  
