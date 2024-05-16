@@ -26,6 +26,7 @@ options.add_argument("--disable-features=VizDisplayCompositor")
 options.add_argument('--ignore-certificate-errors')
 from requests_html import HTMLSession
 import asyncio
+from requests_html import AsyncHTMLSession
 
 def generate_variants(property_name, max_variants=5):
     # Split the property name into words
@@ -178,45 +179,42 @@ def scrape_site_links(url, max_links=8):
         print("An error occurred while scraping the site links:", e)
         return None
 
-async def scrape_similar_hotels(google_url, header_text):
+
+async def fetch_content(google_url):
+    session = AsyncHTMLSession()
+
+    # Fetch the HTML content of the search results page asynchronously
+    response = await session.get(google_url)
+    await response.html.arender()
+    return response
+
+def scrape_similar_hotels(response):
+    soup = response.html.raw_html
+    # Parse the HTML content with BeautifulSoup and extract information
+
+    return soup
+
+def main():
+    header_text = "your_header_text"
+    google_url = f"https://www.google.com/search?q={header_text}"
     
-        print("Fetching similar hotels...")
-        # Create an HTML session
-        session = HTMLSession()
+    # Fetch content asynchronously
+    response = fetch_content(google_url)
 
-        search_query = header_text  
-        google_url = f"https://www.google.com/search?q={search_query}"
-        
+    # Run the Streamlit app
+    st.write("Fetching similar hotels...")
+    soup = st.empty()
+    soup.write("Loading...")
 
-        # Fetch the HTML content of the search results page
-        response = await session.get(google_url)
-        response.raise_for_status() 
+    # Process the response
+    response = response.result()
+    soup_content = scrape_similar_hotels(response)
 
-        # Render JavaScript to ensure all content is loaded
-        await response.html.arender()
+    # Display the processed content
+    soup.write(soup_content)
 
-        # Use BeautifulSoup to parse the rendered HTML
-        soup = response.html.raw_html
-
-        print('soup',soup)
-        
-        print("Search results HTML:", soup.prettify())
-        
-        # Find all search result divs
-        search_results = soup.find_all('div', class_='GtJDDb')
-        print("search_results",search_results)
-        
-        negative_keywords = []
-        for result in search_results:
-            
-            related_info_text = result.find('div', class_='hrZZ8d').get_text(strip=True)
-            negative_keywords.append(related_info_text)
-        
-        return negative_keywords
-# Run the event loop to execute the asynchronous function
-loop = asyncio.get_event_loop()
-loop.run_until_complete(scrape_similar_hotels())
-        
+if __name__ == "__main__":
+    main()
     
 
 
