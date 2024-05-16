@@ -382,14 +382,26 @@ def scrape_and_fetch_data(url, output_file):
     return ad_copy1, ad_copy2, header_text, amenities_found, site_links, negative_keywords, unique_amenities
 
 
-def main():
+async def fetch_content(header_text):
+    try:
+        session = AsyncHTMLSession()
+        google_url = f"https://www.google.com/search?q={header_text}"
+        response = await session.get(google_url)
+        await response.html.arender()
+        negative_keywords = scrape_similar_hotels(response)
+        return negative_keywords
+    except Exception as e:
+        print(f"An error occurred while fetching content: {e}")
+        return None
+
+async def main():
     url = st.text_input("Enter URL")
     output_file = st.text_input("Enter Header")
 
     if st.button("Scrape Data"):
         if url:
             ad_copy1, ad_copy2, header_text, amenities_found, site_links, negative_keywords, unique_amenities = \
-                scrape_and_fetch_data(url, output_file)
+                await scrape_and_fetch_data(url, output_file)
             if negative_keywords:
                 st.write("Negative Keywords:", negative_keywords)
             else:
@@ -397,10 +409,5 @@ def main():
         else:
             st.warning("Please enter a URL.")
 
-
-def run_server():
-    main()
-
-
 if __name__ == "__main__":
-    run_server()
+    asyncio.run(main())
