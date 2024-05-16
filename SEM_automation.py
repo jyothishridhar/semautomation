@@ -189,17 +189,25 @@ from bs4 import BeautifulSoup
 import streamlit as st
 
 async def fetch_content(header_text):
-    session = AsyncHTMLSession()
-    google_url = f"https://www.google.com/search?{urlencode({'q': header_text})}"
-    response = await session.get(google_url)
-    await response.html.arender()
-    negative_keywords = await scrape_similar_hotels(response)
-    return negative_keywords
+    try:
+        session = AsyncHTMLSession()
+        google_url = f"https://www.google.com/search?{urlencode({'q': header_text})}"
+        response = await session.get(google_url)
+        await response.html.arender()
+        negative_keywords = await scrape_similar_hotels(response)  # Pass response as an argument
+        return negative_keywords
+    except Exception as e:
+        print(f"An error occurred while fetching content: {e}")
+        return None
 
 async def main(websocket, path):
     async for header_text in websocket:
-        response = await fetch_content(header_text)
-        await websocket.send(response)
+        async with AsyncHTMLSession() as session:
+            google_url = f"https://www.google.com/search?{urlencode({'q': header_text})}"
+            response = await session.get(google_url)
+            await response.html.arender()
+            negative_keywords = await scrape_similar_hotels(response)  # Pass response as an argument
+            await websocket.send(negative_keywords)
 
 async def scrape_similar_hotels(response):
     soup = response.html.raw_html
@@ -402,6 +410,15 @@ output_file = st.text_input("Enter Header")
  
 if st.button("Scrape Data"):
     if url:
+
+        header_text = extract_header_from_path(output_file) if output_file else None
+        negative_keywords = await fetch_content(header_text)  # Await the result of fetch_content
+        if negative_keywords:
+            st.write("Negative Keywords:", negative_keywords)
+        else:
+            st.error("Failed to fetch negative keywords.")
+    else:
+        st.warning("Please enter a URL.")
  
         ad_copy1, ad_copy2 = scrape_first_proper_paragraph(url)
         header_text = extract_header_from_path(output_file) if output_file else None
@@ -437,8 +454,8 @@ if st.button("Scrape Data"):
  
         # Scraping similar hotels
         
-        negative_keywords = scrape_similar_hotels(response)
-        st.write("negative_keywords:", negative_keywords)
+        # negative_keywords = scrape_similar_hotels(response)
+        # st.write("negative_keywords:", negative_keywords)
 
         # Creating DataFrames for each piece of data
         header_df = pd.DataFrame({'Header Text': [header_text] if header_text else []})
