@@ -323,31 +323,19 @@ def fetch_amenities_from_sub_links(site_links, max_sub_links=4, timeout=10):
     return list(amenities_found)[:8]    
 
 
-def fetch_content(header_text):
+async def fetch_content(header_text):
     try:
-        session = HTMLSession()
-        google_url = f"https://www.google.com/search?{urlencode({'q': header_text})}"
-        response = session.get(google_url)
-        response.html.render()
-        negative_keywords = scrape_similar_hotels(response)  # Pass response as an argument
+        session = AsyncHTMLSession()
+        google_url = f"https://www.google.com/search?q={header_text}"
+        response = await session.get(google_url)
+        await response.html.arender()
+        negative_keywords = scrape_similar_hotels(response)
         return negative_keywords
     except Exception as e:
         print(f"An error occurred while fetching content: {e}")
         return None
 
-
-def scrape_similar_hotels(response):
-    soup = response.html.raw_html
-    # Find all search result divs
-    search_results = soup.find_all('div', class_='GtJDDb')
-    negative_keywords = []
-    for result in search_results:
-        related_info_text = result.find('div', class_='hrZZ8d').get_text(strip=True)
-        negative_keywords.append(related_info_text)
-    return negative_keywords
-
-
-def scrape_and_fetch_data(url, output_file):
+async def scrape_and_fetch_data(url, output_file):
     ad_copy1, ad_copy2 = scrape_first_proper_paragraph(url)
     header_text = extract_header_from_path(output_file) if output_file else None
 
@@ -378,21 +366,9 @@ def scrape_and_fetch_data(url, output_file):
     # Display the fetched amenities
     print("Fetched Amenities:", unique_amenities)
 
-    negative_keywords = fetch_content(header_text)  # Await the result of fetch_content
+    negative_keywords = await fetch_content(header_text)  # Await the result of fetch_content
     return ad_copy1, ad_copy2, header_text, amenities_found, site_links, negative_keywords, unique_amenities
 
-
-async def fetch_content(header_text):
-    try:
-        session = AsyncHTMLSession()
-        google_url = f"https://www.google.com/search?q={header_text}"
-        response = await session.get(google_url)
-        await response.html.arender()
-        negative_keywords = scrape_similar_hotels(response)
-        return negative_keywords
-    except Exception as e:
-        print(f"An error occurred while fetching content: {e}")
-        return None
 
 async def main():
     url = st.text_input("Enter URL")
