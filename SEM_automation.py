@@ -193,27 +193,24 @@ async def fetch_content(header_text):
     google_url = f"https://www.google.com/search?{urlencode({'q': header_text})}"
     response = await session.get(google_url)
     await response.html.arender()
-    return response
+    negative_keywords = await scrape_similar_hotels(response)
+    return negative_keywords
 
 async def main(websocket, path):
     async for header_text in websocket:
         response = await fetch_content(header_text)
-        soup = await scrape_similar_hotels(response)
-        await websocket.send(soup)
+        await websocket.send(response)
 
 async def scrape_similar_hotels(response):
     soup = response.html.raw_html
     # Find all search result divs
     search_results = soup.find_all('div', class_='GtJDDb')
-    print("search_results",search_results)
-    
     negative_keywords = []
     for result in search_results:
-        
         related_info_text = result.find('div', class_='hrZZ8d').get_text(strip=True)
         negative_keywords.append(related_info_text)
-    
     return negative_keywords
+
     # Parse the HTML content with BeautifulSoup and extract information
     # return soup
 
@@ -440,7 +437,7 @@ if st.button("Scrape Data"):
  
         # Scraping similar hotels
         
-        negative_keywords = scrape_similar_hotels( header_text) if header_text else []
+        negative_keywords = scrape_similar_hotels(response)
         st.write("negative_keywords:", negative_keywords)
 
         # Creating DataFrames for each piece of data
@@ -449,12 +446,7 @@ if st.button("Scrape Data"):
         site_links_df = pd.DataFrame(site_links, columns=['Link URL', 'Link Text'])
         property_url = pd.DataFrame({'property_url': [url]})
         property_name_variants_df = pd.DataFrame({'Variants of Property Name': property_name_variants})
-        negative_keywords_df = pd.DataFrame()  # Define an empty DataFrame initially
-        try:
-            negative_keywords_df = pd.DataFrame(negative_keywords, columns=['Negative Keywords'])
-            # Proceed with the rest of your code
-        except ValueError as ve:
-            print("Error creating DataFrame:", ve)
+        negative_keywords_df = pd.DataFrame(negative_keywords, columns=['Negative Keywords'])
         amenities_df = pd.DataFrame({'Amenities': unique_amenities})
         Callouts = ["Book Direct", "Great Location", "Spacious Suites"]
  
