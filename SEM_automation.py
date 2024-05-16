@@ -435,7 +435,7 @@ if st.button("Scrape Data"):
  
         # Scraping similar hotels
         
-        negative_keywords = scrape_similar_hotels("https://www.google.com/", header_text) if header_text else []
+        negative_keywords = scrape_similar_hotels( header_text) if header_text else []
         st.write("negative_keywords:", negative_keywords)
 
         # Creating DataFrames for each piece of data
