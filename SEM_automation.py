@@ -188,6 +188,7 @@ from urllib.parse import urlencode
 from bs4 import BeautifulSoup
 import streamlit as st
 
+
 async def fetch_content(header_text):
     try:
         session = AsyncHTMLSession()
@@ -218,7 +219,6 @@ async def scrape_similar_hotels(response):
         related_info_text = result.find('div', class_='hrZZ8d').get_text(strip=True)
         negative_keywords.append(related_info_text)
     return negative_keywords
-
     # Parse the HTML content with BeautifulSoup and extract information
     # return soup
 
@@ -412,7 +412,7 @@ if st.button("Scrape Data"):
     if url:
 
         header_text = extract_header_from_path(output_file) if output_file else None
-        negative_keywords = await fetch_content(header_text)  # Await the result of fetch_content
+        negative_keywords = fetch_content(header_text)  # Await the result of fetch_content
         if negative_keywords:
             st.write("Negative Keywords:", negative_keywords)
         else:
