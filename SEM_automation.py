@@ -181,88 +181,7 @@ def scrape_site_links(url, max_links=8):
     except Exception as e:
         print("An error occurred while scraping the site links:", e)
         return None
-
-
-async def fetch_content(header_text):
-    try:
-        session = AsyncHTMLSession()
-        google_url = f"https://www.google.com/search?{urlencode({'q': header_text})}"
-        response = await session.get(google_url)
-        await response.html.arender()
-        negative_keywords = await scrape_similar_hotels(response)  # Pass response as an argument
-        return negative_keywords
-    except Exception as e:
-        print(f"An error occurred while fetching content: {e}")
-        return None
-
-
-async def main(websocket, path):
-    async for header_text in websocket:
-        async with AsyncHTMLSession() as session:
-            google_url = f"https://www.google.com/search?{urlencode({'q': header_text})}"
-            response = await session.get(google_url)
-            await response.html.arender()
-            negative_keywords = await fetch_content(header_text)  # Await the result of fetch_content
-            await websocket.send(negative_keywords)
-
-
-async def scrape_similar_hotels(response):
-    soup = response.html.raw_html
-    # Find all search result divs
-    search_results = soup.find_all('div', class_='GtJDDb')
-    negative_keywords = []
-    for result in search_results:
-        related_info_text = result.find('div', class_='hrZZ8d').get_text(strip=True)
-        negative_keywords.append(related_info_text)
-    return negative_keywords
-
-
-def run_server():
-    start_server = websockets.serve(main, "localhost", 8765)
-    asyncio.get_event_loop().run_until_complete(start_server)
-    asyncio.get_event_loop().run_forever()
-
-
-if __name__ == "__main__":
-    run_server()
-
-
-# def run_server():
-#     start_server = websockets.serve(main, "localhost", 8765)
-#     asyncio.get_event_loop().run_until_complete(start_server)
-#     asyncio.get_event_loop().run_forever()
-
-# if __name__ == "__main__":
-#     run_server()
-
-    #     driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
-    #     # service = Service(ChromeDriverManager().install())
-    #     # driver = webdriver.Chrome(service=service)
-    #     driver.get(google_url)
-    #     time.sleep(2)
- 
-    #     search_box = driver.find_element(By.XPATH, "//textarea[@id='APjFqb' and @name='q']")
-    #     search_box.send_keys(header_text)
-    #     search_box.send_keys(Keys.RETURN)
-    #     time.sleep(10)
- 
-    #     search_results = driver.find_elements(By.XPATH, "//div[@class='hrZZ8d']")
- 
-    #     negative_keywords = []
-    #     for result in search_results:
-    #         negative_keywords.append(result.text)
- 
-    #     # Close the browser
-    #     driver.quit()
- 
-    #     print("Negative Keywords:", negative_keywords)
-    #     return negative_keywords
- 
-    # except Exception as e:
-    #     print("An error occurred while scraping similar hotels:", e)
-    #     return None
- 
-   
+    
 # Define a function to handle timeouts
 def timeout_handler():
     raise TimeoutException("Fetching amenities took too long")
@@ -328,8 +247,8 @@ amenities_to_check = [
     "Lift",
     "Iron & Ironing Board"
 ]
- 
- 
+     
+    
 def fetch_amenities_from_links(site_links):
     amenities_found = []
     for link_url, _ in site_links:
@@ -401,111 +320,110 @@ def fetch_amenities_from_sub_links(site_links, max_sub_links=4, timeout=10):
         except Exception as e:
             print(f"An error occurred while fetching amenities from sub-link {link_url}: {e}")
    
-    return list(amenities_found)[:8]
- 
-# Streamlit app code
-st.title("SEM Creation Template")
-# Input URL field
-url = st.text_input("Enter URL")
-# Input for output file path
-output_file = st.text_input("Enter Header")
- 
-if st.button("Scrape Data"):
-    if url:
+    return list(amenities_found)[:8]    
 
-        header_text = extract_header_from_path(output_file) if output_file else None
-        negative_keywords = await fetch_content(header_text)  # Await the result of fetch_content
-        if negative_keywords:
-            st.write("Negative Keywords:", negative_keywords)
+
+async def fetch_content(header_text):
+    try:
+        session = AsyncHTMLSession()
+        google_url = f"https://www.google.com/search?{urlencode({'q': header_text})}"
+        response = await session.get(google_url)
+        await response.html.arender()
+        negative_keywords = await scrape_similar_hotels(response)  # Pass response as an argument
+        return negative_keywords
+    except Exception as e:
+        print(f"An error occurred while fetching content: {e}")
+        return None
+
+
+async def main(websocket, path):
+    async for header_text in websocket:
+        async with AsyncHTMLSession() as session:
+            google_url = f"https://www.google.com/search?{urlencode({'q': header_text})}"
+            response = await session.get(google_url)
+            await response.html.arender()
+            negative_keywords = await fetch_content(header_text)  # Await the result of fetch_content
+            await websocket.send(negative_keywords)
+
+
+async def scrape_similar_hotels(response):
+    soup = response.html.raw_html
+    # Find all search result divs
+    search_results = soup.find_all('div', class_='GtJDDb')
+    negative_keywords = []
+    for result in search_results:
+        related_info_text = result.find('div', class_='hrZZ8d').get_text(strip=True)
+        negative_keywords.append(related_info_text)
+    return negative_keywords
+
+
+async def scrape_and_fetch_data(url, output_file):
+    ad_copy1, ad_copy2 = scrape_first_proper_paragraph(url)
+    header_text = extract_header_from_path(output_file) if output_file else None
+
+    amenities_found = scrape_amenities(url)
+    print("amenities_found",amenities_found)
+    # Fetch amenities from link URLs
+    site_links = scrape_site_links(url)
+    amenities_from_links = fetch_amenities_from_links(site_links)
+    print("amenities_from_links",amenities_from_links)
+    # Fetch amenities from subsequent links
+    amenities_from_sub_links = fetch_amenities_from_sub_links(site_links, max_sub_links=17)
+    # Combine all fetched amenities
+    all_amenities = amenities_found + amenities_from_links + amenities_from_sub_links
+    # Ensure we have at most 8 unique amenities
+    unique_amenities = list(set(all_amenities))[:8]
+
+    # Continue fetching amenities until we have less than 8 but more than 4, or after checking 10 sub-links
+    sub_links_processed = 0
+    while 4 < len(unique_amenities) < 8 and len(site_links) > 0 and sub_links_processed < 10:
+        max_sub_links = 10 - sub_links_processed  # Fetch amenities from remaining sub-links
+        additional_amenities_from_sub_links = fetch_amenities_from_sub_links(site_links, max_sub_links)
+        unique_amenities.extend(additional_amenities_from_sub_links)
+        unique_amenities = list(set(unique_amenities))[:8]  # Limit to a maximum of 8 unique amenities
+        sub_links_processed += max_sub_links  # Update the number of sub-links processed
+        if sub_links_processed >= 10:
+            break  # Break out of the loop after checking 10 sub-links
+
+    # Display the fetched amenities
+    print("Fetched Amenities:", unique_amenities)
+
+    negative_keywords = await fetch_content(header_text)  # Await the result of fetch_content
+    return ad_copy1, ad_copy2, header_text, amenities_found, site_links, negative_keywords, unique_amenities
+
+
+async def main():
+    url = st.text_input("Enter URL")
+    output_file = st.text_input("Enter Header")
+
+    if st.button("Scrape Data"):
+        if url:
+            ad_copy1, ad_copy2, header_text, amenities_found, site_links, negative_keywords, unique_amenities = \
+                await scrape_and_fetch_data(url, output_file)
+            if negative_keywords:
+                st.write("Negative Keywords:", negative_keywords)
+            else:
+                st.error("Failed to fetch negative keywords.")
         else:
-            st.error("Failed to fetch negative keywords.")
-    else:
-        st.warning("Please enter a URL.")
- 
-        ad_copy1, ad_copy2 = scrape_first_proper_paragraph(url)
-        header_text = extract_header_from_path(output_file) if output_file else None
- 
-        amenities_found = scrape_amenities(url)
-        print("amenities_found",amenities_found)
-        # Fetch amenities from link URLs
-        site_links = scrape_site_links(url)
-        amenities_from_links = fetch_amenities_from_links(site_links)
-        print("amenities_from_links",amenities_from_links)
-        # Fetch amenities from subsequent links
-        amenities_from_sub_links = fetch_amenities_from_sub_links(site_links, max_sub_links=17)
-        # Combine all fetched amenities
-        all_amenities = amenities_found + amenities_from_links + amenities_from_sub_links
-        # Ensure we have at most 8 unique amenities
-        unique_amenities = list(set(all_amenities))[:8]
- 
-        # Continue fetching amenities until we have less than 8 but more than 4, or after checking 10 sub-links
-        sub_links_processed = 0
-        while 4 < len(unique_amenities) < 8 and len(site_links) > 0 and sub_links_processed < 10:
-            max_sub_links = 10 - sub_links_processed  # Fetch amenities from remaining sub-links
-            additional_amenities_from_sub_links = fetch_amenities_from_sub_links(site_links, max_sub_links)
-            unique_amenities.extend(additional_amenities_from_sub_links)
-            unique_amenities = list(set(unique_amenities))[:8]  # Limit to a maximum of 8 unique amenities
-            sub_links_processed += max_sub_links  # Update the number of sub-links processed
-            if sub_links_processed >= 10:
-                break  # Break out of the loop after checking 10 sub-links
- 
-        # Display the fetched amenities
-        st.write("Fetched Amenities:", unique_amenities)
-        # Generate property name variants
-        property_name_variants = generate_variants(header_text) if header_text else []
- 
-        # Scraping similar hotels
-        
-        # negative_keywords = scrape_similar_hotels(response)
-        # st.write("negative_keywords:", negative_keywords)
+            st.warning("Please enter a URL.")
 
-        # Creating DataFrames for each piece of data
-        header_df = pd.DataFrame({'Header Text': [header_text] if header_text else []})
-        paragraph_df = pd.DataFrame({'Ad copy1': [ad_copy1], 'Ad copy2': [ad_copy2]})
-        site_links_df = pd.DataFrame(site_links, columns=['Link URL', 'Link Text'])
-        property_url = pd.DataFrame({'property_url': [url]})
-        property_name_variants_df = pd.DataFrame({'Variants of Property Name': property_name_variants})
-        negative_keywords_df = pd.DataFrame(negative_keywords, columns=['Negative Keywords'])
-        amenities_df = pd.DataFrame({'Amenities': unique_amenities})
-        Callouts = ["Book Direct", "Great Location", "Spacious Suites"]
- 
-        # Concatenating DataFrames horizontally
-        df = pd.concat([header_df, paragraph_df, site_links_df, property_url, property_name_variants_df, negative_keywords_df, amenities_df], axis=1)
- 
-        # Separate "Water Park" from the link text and add it to the Callouts column
-        water_park_added = False  # Flag to track if "Water Park" has been added to Callouts column
-        for index, row in df.iterrows():
-            link_text = str(row['Link Text'])  # Ensure link text is treated as a string
-            water_park_match = re.search(r'Water Park', link_text, flags=re.IGNORECASE)
-            if water_park_match:
-                if not water_park_added:
-                    Callouts.append("Water Park")  # Add "Water Park" to Callouts list
-                    water_park_added = True  # Set flag to True
-                # If "Water Park" is found in the link text, replace it with a placeholder to keep it intact
-                updated_link_text = re.sub(r'Water Park', '~~WATERPARK~~', link_text, flags=re.IGNORECASE).strip()
-                df.at[index, 'Link Text'] = updated_link_text  # Update the link text column
- 
-        # Create a new DataFrame for Callouts
-        callouts_df = pd.DataFrame({'Callouts': Callouts})
-        # Concatenate Callouts DataFrame with existing DataFrame
-        df = pd.concat([df, callouts_df], axis=1)
-        # Finally, restore "Water Park" from the placeholder in the Link Text column
-        df['Link Text'] = df['Link Text'].str.replace('~~WATERPARK~~', 'Water Park', case=False)
-        # Check if output file path is provided
-        if output_file:
-            try:
-                # Writing to Excel
-                df.to_excel(output_file, index=False)
-                st.success(f"Data has been saved to {output_file}")
-            except Exception as e:
-                st.error(f"Error occurred while saving data: {e}")
-        else:
-            st.warning("Please enter a valid output file path.")
- 
-        # Display the DataFrame
-        st.dataframe(df)
- 
-else:
-    st.warning("Please enter a URL.")
 
-  
+async def scrape_similar_hotels(response):
+    soup = response.html.raw_html
+    # Find all search result divs
+    search_results = soup.find_all('div', class_='GtJDDb')
+    negative_keywords = []
+    for result in search_results:
+        related_info_text = result.find('div', class_='hrZZ8d').get_text(strip=True)
+        negative_keywords.append(related_info_text)
+    return negative_keywords
+
+
+def run_server():
+    start_server = websockets.serve(main, "localhost", 8765)
+    asyncio.get_event_loop().run_until_complete(start_server)
+    asyncio.get_event_loop().run_forever()
+
+
+if __name__ == "__main__":
+    run_server()
