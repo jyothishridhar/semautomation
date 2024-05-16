@@ -27,6 +27,7 @@ options.add_argument('--ignore-certificate-errors')
 from requests_html import HTMLSession
 import asyncio
 from requests_html import AsyncHTMLSession
+import pyppeteer
 
 def generate_variants(property_name, max_variants=5):
     # Split the property name into words
@@ -201,6 +202,12 @@ async def main():
     header_text = "your_header_text"
     google_url = f"https://www.google.com/search?q={header_text}"
     
+    # Specify the path to the Chromium executable
+    chromium_path = 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe'
+
+    # Launch Pyppeteer with the specified Chromium path
+    browser = await pyppeteer.launch(executablePath=chromium_path)
+
     # Fetch content asynchronously
     response = await fetch_content(google_url)
 
@@ -214,10 +221,6 @@ async def main():
 
     # Display the processed content
     soup.write(soup_content)
-
-if __name__ == "__main__":
-    import asyncio
-    asyncio.run(main())
 
 
     #     driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
