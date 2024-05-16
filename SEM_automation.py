@@ -203,8 +203,22 @@ async def main(websocket, path):
 
 async def scrape_similar_hotels(response):
     soup = response.html.raw_html
+    # Find all search result divs
+    search_results = soup.find_all('div', class_='GtJDDb')
+    print("search_results",search_results)
+    
+    negative_keywords = []
+    for result in search_results:
+        
+        related_info_text = result.find('div', class_='hrZZ8d').get_text(strip=True)
+        negative_keywords.append(related_info_text)
+    
+    return negative_keywords
     # Parse the HTML content with BeautifulSoup and extract information
-    return soup
+    # return soup
+
+# 
+
 
 # def run_server():
 #     start_server = websockets.serve(main, "localhost", 8765)
