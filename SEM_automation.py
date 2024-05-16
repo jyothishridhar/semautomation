@@ -449,6 +449,7 @@ if st.button("Scrape Data"):
         site_links_df = pd.DataFrame(site_links, columns=['Link URL', 'Link Text'])
         property_url = pd.DataFrame({'property_url': [url]})
         property_name_variants_df = pd.DataFrame({'Variants of Property Name': property_name_variants})
+        negative_keywords_df = pd.DataFrame()  # Define an empty DataFrame initially
         try:
             negative_keywords_df = pd.DataFrame(negative_keywords, columns=['Negative Keywords'])
             # Proceed with the rest of your code
