@@ -192,12 +192,6 @@ async def fetch_content(google_url):
     await response.html.arender()
     return response
 
-def scrape_similar_hotels(response):
-    soup = response.html.raw_html
-    # Parse the HTML content with BeautifulSoup and extract information
-
-    return soup
-
 async def main():
     header_text = "your_header_text"
     google_url = f"https://www.google.com/search?q={header_text}"
@@ -217,12 +211,20 @@ async def main():
     soup.write("Loading...")
 
     # Process the response
-    soup_content = scrape_similar_hotels(response)
+    soup_content = await scrape_similar_hotels(response)
 
     # Display the processed content
     soup.write(soup_content)
 
+async def scrape_similar_hotels(response):
+    soup = response.html.raw_html
+    # Parse the HTML content with BeautifulSoup and extract information
 
+    return soup
+
+if __name__ == "__main__":
+    asyncio.run(main())
+    
     #     driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
     #     # service = Service(ChromeDriverManager().install())
     #     # driver = webdriver.Chrome(service=service)
