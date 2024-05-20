@@ -248,32 +248,41 @@ def scrape_amenities(url):
         if url.startswith(('tel:', 'mailto:')):
             print("Skipping URL:", url)
             return []
- 
+
         # Fetch the HTML content of the webpage with a timeout
         response = requests.get(url, timeout=60)  # Set the timeout directly here
         response.raise_for_status()  # Raise an exception for non-HTTP or non-HTTPS URLs
+
         # Parse the HTML content
         soup = BeautifulSoup(response.text, 'html.parser')
+
         # Extract text from all elements
         all_text = soup.get_text()
-        # Find amenities
-        found_amenities = []
-        for amenity in amenities_to_check:
-            if re.search(amenity, all_text, re.IGNORECASE):
-                found_amenities.append(amenity)
+
+        # Initialize a dictionary to store amenities with their index from amenities_to_check
+        amenities_index = {amenity: float('inf') for amenity in amenities_to_check}
+
+        # Find amenities and update their index
+        for index, amenity in enumerate(amenities_to_check):
+            match = re.search(amenity, all_text, re.IGNORECASE)
+            if match:
+                amenities_index[amenity] = match.start()
+
+        # Sort amenities based on their index in the webpage
+        sorted_amenities = sorted(amenities_index, key=amenities_index.get)
+
+        # Return the first 8 amenities in the sorted list
+        found_amenities = sorted_amenities[:8]
+
         print("found_amenities", found_amenities)
-        return found_amenities[:8]
- 
+        return found_amenities
+
     except Exception as e:
         print(f"An error occurred while scraping amenities from url {url}: {e}")
         return []
  
- 
 # Define the list of amenities to check for
 amenities_to_check = [
-    
-
-
     "Swimming Pool",
     "Beach Access",
     "Spa Services",
