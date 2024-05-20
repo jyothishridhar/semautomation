@@ -248,35 +248,26 @@ def scrape_amenities(url):
         if url.startswith(('tel:', 'mailto:')):
             print("Skipping URL:", url)
             return []
-
+ 
         # Fetch the HTML content of the webpage with a timeout
         response = requests.get(url, timeout=60)  # Set the timeout directly here
         response.raise_for_status()  # Raise an exception for non-HTTP or non-HTTPS URLs
-
         # Parse the HTML content
         soup = BeautifulSoup(response.text, 'html.parser')
-
         # Extract text from all elements
         all_text = soup.get_text()
-
-        # Initialize a list to store found amenities
+        # Find amenities
         found_amenities = []
-
-        # Find amenities based on the given order
         for amenity in amenities_to_check:
             if re.search(amenity, all_text, re.IGNORECASE):
                 found_amenities.append(amenity)
-            # Limit to 8 amenities
-            if len(found_amenities) >= 8:
-                break
-
         print("found_amenities", found_amenities)
-        return found_amenities
-
+        return list(dict.fromkeys(amenities_found))[:8]
     except Exception as e:
         print(f"An error occurred while scraping amenities from url {url}: {e}")
         return []
-
+ 
+ 
 # Define the list of amenities to check for
 amenities_to_check = [
     "Swimming Pool",
@@ -288,24 +279,25 @@ amenities_to_check = [
     "Fitness Center",
     "Room Service",
     "Free WiFi",
-    "Wi-Fi Internet Access",
-    "Public Wi-Fi",
     "Business Center",
     "A/C",
-    "Air-conditioning",
-    "Air Conditioning & Heating",
     "Laundry Services",
     "Easy Check In",
     "Express Check Out",
     "Phone",
     "Hair Dryer",
-    "Hairdryer",
+    "Wi-Fi Internet Access",
+    "Air-conditioning",
+    "Public Wi-Fi",
     "Restaurant",
+    "Fitness Center",
     "Bicycle Rental",
+    "Air Conditioning & Heating",
+    "Hairdryer",
     "Balcony",
-    "Lift"    
+    "Lift",
+    "Iron & Ironing Board"
 ]
-
  
  
 def fetch_amenities_from_links(site_links):
@@ -318,7 +310,10 @@ def fetch_amenities_from_links(site_links):
         except Exception as e:
             print(f"An error occurred while fetching amenities from link_url {link_url}: {e}")
     return list(dict.fromkeys(amenities_found))[:8]
-
+   
+import requests
+from requests.exceptions import Timeout
+ 
 def fetch_amenities_from_sub_links(site_links, max_sub_links=4, timeout=10):
     amenities_found = set()
    
