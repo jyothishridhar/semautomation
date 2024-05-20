@@ -259,7 +259,7 @@ def scrape_amenities(url):
         # Extract text from all elements
         all_text = soup.get_text()
 
-        # Initialize a dictionary to store found amenities
+        # Initialize a list to store found amenities
         found_amenities = []
 
         # Find amenities based on the given order
@@ -317,11 +317,8 @@ def fetch_amenities_from_links(site_links):
                 amenities_found.extend(amenities)
         except Exception as e:
             print(f"An error occurred while fetching amenities from link_url {link_url}: {e}")
-    return amenities_found[:8]
-   
-import requests
-from requests.exceptions import Timeout
- 
+    return list(dict.fromkeys(amenities_found))[:8]
+
 def fetch_amenities_from_sub_links(site_links, max_sub_links=4, timeout=10):
     amenities_found = set()
    
@@ -379,7 +376,7 @@ def fetch_amenities_from_sub_links(site_links, max_sub_links=4, timeout=10):
         except Exception as e:
             print(f"An error occurred while fetching amenities from sub-link {link_url}: {e}")
    
-    return list(amenities_found)[:8]
+    return list(dict.fromkeys(amenities_found))[:8]
  
 # Streamlit app code
 st.title("SEM Creation Template")
