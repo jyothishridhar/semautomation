@@ -439,9 +439,17 @@ if st.button("Scrape Data"):
             water_keywords = ["swimming pool", "Water Park", "pool", "sea", "Salt Water Swimming Pool", "Pool & sea"]
             # Balcony-related keywords
             balcony_keywords = ["balcony", "terrace", "veranda", "patio", "deck", "outdoor seating", "private balcony", "balcony view", "balcony access", "sun deck", "rooftop terrace", "lanai", "courtyard", "loggia", "open-air balcony", "French balcony", "wrap-around balcony", "overlooking balcony", "scenic balcony", "balcony suite"]
-
             # Pet-friendly keywords
             pet_keywords = ["pet-friendly", "pet-friendly policy", "dog-friendly", "cat-friendly", "pet-friendly hotel", "pet-friendly apartment", "pet-friendly rental", "pet-friendly room", "pet-friendly amenities", "pet-friendly patio", "pet-friendly park", "pet-friendly restaurant", "pet-friendly neighborhood", "pet-friendly community", "pet-friendly activities", "pet-friendly events", "pet-friendly travel", "pet-friendly vacations", "pet-friendly establishments"]
+
+            water_found = [keyword for keyword in water_keywords if re.search(keyword, page_content, re.IGNORECASE)]
+            balcony_found = [keyword for keyword in balcony_keywords if re.search(keyword, page_content, re.IGNORECASE)]
+            pet_found = [keyword for keyword in pet_keywords if re.search(keyword, page_content, re.IGNORECASE)]
+
+            print("Water-related keywords found:", water_found)
+            print("Balcony-related keywords found:", balcony_found)
+            print("Pet-friendly keywords found:", pet_found)
+
             if any(re.search(keyword, page_content, re.IGNORECASE) for keyword in water_keywords):
                 Callouts.append("Water Park")
 
