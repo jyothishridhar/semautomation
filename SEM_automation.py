@@ -432,38 +432,28 @@ if st.button("Scrape Data"):
         # Concatenating DataFrames horizontally
         df = pd.concat([header_df, paragraph_df, site_links_df, property_url, property_name_variants_df, negative_keywords_df, amenities_df], axis=1)
  
-        # Separate "Water Park" from the link text and add it to the Callouts column
-        water_park_added = False  # Flag to track if "Water Park" has been added to Callouts column
-        for index, row in df.iterrows():
-            link_text = str(row['Link Text'])  # Ensure link text is treated as a string
-            water_park_match = re.search(r'Water Park', link_text, flags=re.IGNORECASE)
-            if water_park_match:
-                if not water_park_added:
-                    Callouts.append("Water Park")  # Add "Water Park" to Callouts list
-                    water_park_added = True  # Set flag to True
-                # If "Water Park" is found in the link text, replace it with a placeholder to keep it intact
-                updated_link_text = re.sub(r'Water Park', '~~WATERPARK~~', link_text, flags=re.IGNORECASE).strip()
-                df.at[index, 'Link Text'] = updated_link_text  # Update the link text column
- 
-        # Create a new DataFrame for Callouts
+        try:
+            response = requests.get(url)
+            response.raise_for_status()
+            page_content = response.text
+            water_keywords = ["swimming pool", "Water Park", "pool", "sea", "Salt Water Swimming Pool", "Pool & sea"]
+            if any(re.search(keyword, page_content, re.IGNORECASE) for keyword in water_keywords):
+                Callouts.append("Water Park")
+        except Exception as e:
+            print(f"An error occurred while checking for water-related keywords: {e}")
+
         callouts_df = pd.DataFrame({'Callouts': Callouts})
-        # Concatenate Callouts DataFrame with existing DataFrame
         df = pd.concat([df, callouts_df], axis=1)
-        # Finally, restore "Water Park" from the placeholder in the Link Text column
-        df['Link Text'] = df['Link Text'].str.replace('~~WATERPARK~~', 'Water Park', case=False)
-        # Check if output file path is provided
+
         if output_file:
             try:
-                # Writing to Excel
                 df.to_excel(output_file, index=False)
                 st.success(f"Data has been saved to {output_file}")
             except Exception as e:
                 st.error(f"Error occurred while saving data: {e}")
         else:
             st.warning("Please enter a valid output file path.")
- 
-        # Display the DataFrame
+
         st.dataframe(df)
- 
     else:
         st.warning("Please enter a URL.")
