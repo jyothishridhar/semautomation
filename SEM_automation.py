@@ -266,9 +266,9 @@ def scrape_amenities(url):
         for index, amenity in enumerate(amenities_to_check):
             match = re.search(amenity, all_text, re.IGNORECASE)
             if match:
-                amenities_index[amenity] = match.start()
+                amenities_index[amenity] = index
 
-        # Sort amenities based on their index in the webpage
+        # Sort amenities based on their index in amenities_to_check
         sorted_amenities = sorted(amenities_index, key=amenities_index.get)
 
         # Return the first 8 amenities in the sorted list
