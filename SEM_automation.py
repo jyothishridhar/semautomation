@@ -102,10 +102,26 @@ def scrape_site_links(url, max_links=8):
  
         # Define patterns to match variations in link text
         link_text_patterns = [
+            "Official\s?Site",
+            "Rooms\s?&\s?Suites",
+            "WEDDING",
+            "Facilities\s?&\s?Activities",
+            "Sports\s?&\s?Entertainment",
+            "Specials",
+            "Activities",
+            "Groups\s?&\s?Meetings",
+            "Dining",
+            "Meetings\s?&\s?Events",
             "Contact\s?Us",
             "ACCOMMODATION",
-            "Accommodations"
-            "Contact Us",
+            "Photos",
+            "Events",
+            "Pool & sea",
+            "Wellness & fitness",
+            "Water Park",
+            "Salt Water Swimming Pool",
+            "Accommodations",
+            "Contact Us"
             "Amenities",
             "Location"
         ]
