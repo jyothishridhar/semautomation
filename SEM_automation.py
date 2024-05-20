@@ -121,16 +121,22 @@ def scrape_site_links(url, max_links=8):
             "Water Park",
             "Salt Water Swimming Pool",
             "Accommodations",
-            "Contact Us"
+            "Contact Us",
+            "Amenities",
+            "Location"
         ]
  
-        # Relevant words related to water activities
-        relevant_water_words = ["swimming pool", "Water Park", "pool", "sea", "Salt Water Swimming Pool", "Pool & sea"]
+        # # Relevant words related to water activities
+        # relevant_water_words = ["swimming pool", "Water Park", "pool", "sea", "Salt Water Swimming Pool", "Pool & sea"]
  
         # Relevant words related to meetings and events
         relevant_meetings_words = ["Meetings & Events", "Groups & Meetings", "Meetings", "Events", "WEDDING", "Wedding"]
 
         relevant_Entertainment_words=["Sports\s?&\s?Entertainment", "Sports", "Entertainment", "Pool & sea", "Salt Water Swimming Pool", "swimming pool", "pool", "sea", "Water\s?Park"]
+
+        relevant_Facilities_Activities_words=["Facilities\s?&\s?Activities", "Activities"]
+
+        relevant_Spa_Wellness_words=["Spa\s?&\s?Wellness", "Spa", "Wellness\s?&\s?fitness"]
  
         # Compile regex pattern for link text
         link_text_pattern = re.compile('|'.join(link_text_patterns), re.IGNORECASE)
@@ -153,19 +159,27 @@ def scrape_site_links(url, max_links=8):
                 if link_url not in unique_urls:
                     unique_urls.add(link_url)
  
-                    # Check if the link text matches any water-related words
-                    if any(word.lower() in link_text.lower() for word in relevant_water_words):
-                        # Add "Water park" to the site links
-                        site_links.append((link_url, "Water park"))
+                    # # Check if the link text matches any water-related words
+                    # if any(word.lower() in link_text.lower() for word in relevant_water_words):
+                    #     # Add "Water park" to the site links
+                    #     site_links.append((link_url, "Water park"))
  
                     # Check if the link text matches any meeting/event-related words
-                    elif any(word.lower() in link_text.lower() for word in relevant_meetings_words):
+                    if any(word.lower() in link_text.lower() for word in relevant_meetings_words):
                         # Add "Meetings & events" to the site links
                         site_links.append((link_url, "Meetings & events"))
 
                     elif any(word.lower() in link_text.lower() for word in relevant_Entertainment_words):
                         # Add "Meetings & events" to the site links
                         site_links.append((link_url, "Meetings & events"))
+
+                    elif any(word.lower() in link_text.lower() for word in relevant_Facilities_Activities_words):
+                        # Add "Meetings & events" to the site links
+                        site_links.append((link_url, "Facilities & Activities"))
+
+                    elif any(word.lower() in link_text.lower() for word in relevant_Spa_Wellness_words):
+                        # Add "Meetings & events" to the site links
+                        site_links.append((link_url, "Spa & Wellness"))       
     
 
 
