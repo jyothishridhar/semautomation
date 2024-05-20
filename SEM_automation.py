@@ -271,6 +271,9 @@ def scrape_amenities(url):
  
 # Define the list of amenities to check for
 amenities_to_check = [
+    
+
+
     "Swimming Pool",
     "Beach Access",
     "Spa Services",
@@ -280,24 +283,22 @@ amenities_to_check = [
     "Fitness Center",
     "Room Service",
     "Free WiFi",
+    "Wi-Fi Internet Access",
+    "Public Wi-Fi",
     "Business Center",
     "A/C",
+    "Air-conditioning",
+    "Air Conditioning & Heating",
     "Laundry Services",
     "Easy Check In",
     "Express Check Out",
     "Phone",
     "Hair Dryer",
-    "Wi-Fi Internet Access",
-    "Air-conditioning",
-    "Public Wi-Fi",
-    "Restaurant",
-    "Fitness Center",
-    "Bicycle Rental",
-    "Air Conditioning & Heating",
     "Hairdryer",
+    "Restaurant",
+    "Bicycle Rental",
     "Balcony",
-    "Lift",
-    "Iron & Ironing Board"
+    "Lift"    
 ]
  
  
