@@ -129,6 +129,8 @@ def scrape_site_links(url, max_links=8):
  
         # Relevant words related to meetings and events
         relevant_meetings_words = ["Meetings & Events", "Groups & Meetings", "Meetings", "Events", "WEDDING", "Wedding"]
+
+        relevant_Entertainment_words=["Sports\s?&\s?Entertainment", "Sports", "Entertainment", "Pool & sea", "Salt Water Swimming Pool", "swimming pool", "pool", "sea", "Water\s?Park"]
  
         # Compile regex pattern for link text
         link_text_pattern = re.compile('|'.join(link_text_patterns), re.IGNORECASE)
@@ -160,6 +162,13 @@ def scrape_site_links(url, max_links=8):
                     elif any(word.lower() in link_text.lower() for word in relevant_meetings_words):
                         # Add "Meetings & events" to the site links
                         site_links.append((link_url, "Meetings & events"))
+
+                    elif any(word.lower() in link_text.lower() for word in relevant_Entertainment_words):
+                        # Add "Meetings & events" to the site links
+                        site_links.append((link_url, "Meetings & events"))
+    
+
+
  
                     else:
                         # Append both link URL and link text
@@ -168,7 +177,7 @@ def scrape_site_links(url, max_links=8):
                     # Break the loop if the maximum number of links is reached
                     if len(site_links) >= max_links:
                         break
- 
+
         return site_links
  
     except Exception as e:
