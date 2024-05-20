@@ -402,7 +402,7 @@ if st.button("Scrape Data"):
         # Combine all fetched amenities
         all_amenities = amenities_found + amenities_from_links + amenities_from_sub_links
         # Ensure we have at most 8 unique amenities
-        unique_amenities = list(set(all_amenities))[:8]
+        unique_amenities = list(dict.fromkeys(all_amenities))[:8]
  
         # Continue fetching amenities until we have less than 8 but more than 4, or after checking 10 sub-links
         sub_links_processed = 0
