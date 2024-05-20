@@ -101,41 +101,38 @@ def scrape_site_links(url, max_links=8):
         site_links = []
  
         # Define patterns to match variations in link text
-        link_text_patterns = {
-            "Official Site": ["Official\s?Site"],
-            "Accommodations": ["Accommodations", "ACCOMMODATIONS"],
-            "Amenities": ["Amenities", "AMENITIES"],
-            "Dining": ["Dining", "DINING"],
-            "Entertainment": ["Sports\s?&\s?Entertainment", "Sports", "Entertainment", "Pool & sea", "Salt Water Swimming Pool", "swimming pool", "pool", "sea", "Water\s?Park"],
-            "Facilities & Activities": ["Facilities\s?&\s?Activities", "Activities"],
-            "Location": ["Location", "LOCATION"],
-            "Meetings & Events": ["Meetings\s?&\s?Events", "Groups\s?&\s?Meetings", "Meetings", "Events", "WEDDING", "Wedding"],
-            "Photo Gallery": ["Photo\s?Gallery", "Photo"],
-            "Restaurants": ["Restaurants", "RESTAURANTS"],
-            "Rooms & Suites": ["Rooms\s?&\s?Suites", "Rooms", "ROOMS"],
-            "Spa & Wellness": ["Spa\s?&\s?Wellness", "Spa", "Wellness\s?&\s?fitness"],
-            "Specials & Packages": ["Specials\s?&\s?Packages"],
-            "Contact Us": ["Contact\s?Us"],
-            "Water Park": []
-        }
-        
-        # Create a reverse mapping for regex compilation
-        pattern_category_map = {}
-        for category, patterns in link_text_patterns.items():
-            for pattern in patterns:
-                pattern_category_map[pattern] = category
-
+        link_text_patterns = [
+            "Official\s?Site",
+            "Rooms\s?&\s?Suites",
+            "WEDDING",
+            "Facilities\s?&\s?Activities",
+            "Sports\s?&\s?Entertainment",
+            "Specials",
+            "Activities",
+            "Groups\s?&\s?Meetings",
+            "Dining",
+            "Meetings\s?&\s?Events",
+            "Contact\s?Us",
+            "ACCOMMODATION",
+            "Photos",
+            "Events",
+            "Pool & sea",
+            "Wellness & fitness",
+            "Water Park",
+            "Salt Water Swimming Pool",
+            "Accommodations",
+            "Contact Us"
+        ]
+ 
+        # Relevant words related to water activities
+        relevant_water_words = ["swimming pool", "Water Park", "pool", "sea", "Salt Water Swimming Pool", "Pool & sea"]
+ 
+        # Relevant words related to meetings and events
+        relevant_meetings_words = ["Meetings & Events", "Groups & Meetings", "Meetings", "Events", "WEDDING", "Wedding"]
+ 
         # Compile regex pattern for link text
-        link_text_pattern = re.compile('|'.join(pattern_category_map.keys()), re.IGNORECASE)
-
-        # Function to categorize link text
-        def categorize_link_text(link_text):
-            match = link_text_pattern.search(link_text)
-            if match:
-                matched_text = match.group()
-                return pattern_category_map[matched_text]
-            return None
-
+        link_text_pattern = re.compile('|'.join(link_text_patterns), re.IGNORECASE)
+ 
         # Loop through all anchor tags and extract links with specific text
         for a in anchor_tags:
             # Get the text of the anchor tag, stripped of leading and trailing whitespace
@@ -143,8 +140,7 @@ def scrape_site_links(url, max_links=8):
             print("link_text", link_text)
  
             # Check if the link text matches any of the desired site links
-            category = categorize_link_text(link_text)
-            if category:
+            if link_text_pattern.search(link_text):
                 # Extract the href attribute to get the link URL
                 link_url = a.get('href')
  
@@ -155,8 +151,19 @@ def scrape_site_links(url, max_links=8):
                 if link_url not in unique_urls:
                     unique_urls.add(link_url)
  
-                    # Add the categorized link text to the site links
-                    site_links.append((link_url, category))
+                    # Check if the link text matches any water-related words
+                    if any(word.lower() in link_text.lower() for word in relevant_water_words):
+                        # Add "Water park" to the site links
+                        site_links.append((link_url, "Water park"))
+ 
+                    # Check if the link text matches any meeting/event-related words
+                    elif any(word.lower() in link_text.lower() for word in relevant_meetings_words):
+                        # Add "Meetings & events" to the site links
+                        site_links.append((link_url, "Meetings & events"))
+ 
+                    else:
+                        # Append both link URL and link text
+                        site_links.append((link_url, link_text))
  
                     # Break the loop if the maximum number of links is reached
                     if len(site_links) >= max_links:
@@ -167,7 +174,7 @@ def scrape_site_links(url, max_links=8):
     except Exception as e:
         print("An error occurred while scraping the site links:", e)
         return None
- 
+
 def scrape_similar_hotels(google_url, header_text):
     try:
         print("Fetching similar hotels...")
