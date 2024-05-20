@@ -117,12 +117,56 @@ def scrape_site_links(url, max_links=8):
             "Contact Us": ["Contact\s?Us"],
             "Water Park":[],
             }
+        
+        # Create a reverse mapping for regex compilation
+        pattern_category_map = {}
+        for category, patterns in link_text_patterns.items():
+            for pattern in patterns:
+                pattern_category_map[pattern] = category
+
+        # Compile regex pattern for link text
+        link_text_pattern = re.compile('|'.join(pattern_category_map.keys()), re.IGNORECASE)
+
+        # Example function to categorize link text
+        def categorize_link_text(link_text):
+            match = link_text_pattern.search(link_text)
+            if match:
+                matched_text = match.group()
+                return pattern_category_map[matched_text]
+            return None
+
+        # Example usage
+        link_texts = [
+            "Official Site",
+            "Accommodations",
+            "Amenities",
+            "Dining",
+            "Entertainment",
+            "Facilities & Activities",
+            "Location",
+            "Meetings & Events",
+            "Photo Gallery",
+            "Restaurants"
+            "Rooms & Suites",
+            "Spa & Wellness",
+            "Specials & Packages",
+            "Contact Us"
+             ]
+
+        categorized_links = {link_text: categorize_link_text(link_text) for link_text in link_texts}
+
+        # Print the categorized links
+        for link_text, category in categorized_links.items():
+            print(f"{link_text} = {category}")
+        
+
+
+
  
         # Relevant words related to water activities
         relevant_water_words = ["swimming pool", "Water Park", "pool", "sea","Salt Water Swimming Pool","Pool & sea"]
  
-        # Compile regex pattern for link text
-        link_text_pattern = re.compile('|'.join(link_text_patterns), re.IGNORECASE)
+       
  
         # Loop through all anchor tags and extract links with specific text
         for a in anchor_tags:
