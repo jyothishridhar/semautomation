@@ -437,8 +437,21 @@ if st.button("Scrape Data"):
             response.raise_for_status()
             page_content = response.text
             water_keywords = ["swimming pool", "Water Park", "pool", "sea", "Salt Water Swimming Pool", "Pool & sea"]
+            # Balcony-related keywords
+            balcony_keywords = ["balcony", "terrace", "veranda", "patio", "deck", "outdoor seating", "private balcony", "balcony view", "balcony access", "sun deck", "rooftop terrace", "lanai", "courtyard", "loggia", "open-air balcony", "French balcony", "wrap-around balcony", "overlooking balcony", "scenic balcony", "balcony suite"]
+
+            # Pet-friendly keywords
+            pet_keywords = ["pet-friendly", "pet-friendly policy", "dog-friendly", "cat-friendly", "pet-friendly hotel", "pet-friendly apartment", "pet-friendly rental", "pet-friendly room", "pet-friendly amenities", "pet-friendly patio", "pet-friendly park", "pet-friendly restaurant", "pet-friendly neighborhood", "pet-friendly community", "pet-friendly activities", "pet-friendly events", "pet-friendly travel", "pet-friendly vacations", "pet-friendly establishments"]
             if any(re.search(keyword, page_content, re.IGNORECASE) for keyword in water_keywords):
                 Callouts.append("Water Park")
+
+            # Check for balcony-related keywords
+            if any(re.search(keyword, page_content, re.IGNORECASE) for keyword in balcony_keywords):
+                Callouts.append("Balcony")
+
+            # Check for pet-friendly keywords
+            if any(re.search(keyword, page_content, re.IGNORECASE) for keyword in pet_keywords):  
+                Callouts.append("Pet-friendly")  
         except Exception as e:
             print(f"An error occurred while checking for water-related keywords: {e}")
 
