@@ -102,25 +102,9 @@ def scrape_site_links(url, max_links=8):
  
         # Define patterns to match variations in link text
         link_text_patterns = [
-            "Official\s?Site",
-            "Rooms\s?&\s?Suites",
-            "WEDDING",
-            "Facilities\s?&\s?Activities",
-            "Sports\s?&\s?Entertainment",
-            "Specials",
-            "Activities",
-            "Groups\s?&\s?Meetings",
-            "Dining",
-            "Meetings\s?&\s?Events",
             "Contact\s?Us",
             "ACCOMMODATION",
-            "Photos",
-            "Events",
-            "Pool & sea",
-            "Wellness & fitness",
-            "Water Park",
-            "Salt Water Swimming Pool",
-            "Accommodations",
+            "Accommodations"
             "Contact Us",
             "Amenities",
             "Location"
@@ -132,7 +116,7 @@ def scrape_site_links(url, max_links=8):
         # Relevant words related to meetings and events
         relevant_meetings_words = ["Meetings & Events", "Groups & Meetings", "Meetings", "Events", "WEDDING", "Wedding"]
 
-        relevant_Entertainment_words=["Sports\s?&\s?Entertainment", "Sports", "Entertainment", "Pool & sea", "Salt Water Swimming Pool", "swimming pool", "pool", "sea", "Water\s?Park"]
+        relevant_Entertainment_words=["Sports\s?&\s?Entertainment", "Sports", "Entertainment", "Pool & sea", "Salt Water Swimming Pool", "swimming pool", "pool", "sea", "Water Park","Specials"]
 
         relevant_Facilities_Activities_words=["Facilities\s?&\s?Activities", "Activities"]
 
