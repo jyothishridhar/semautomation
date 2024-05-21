@@ -103,17 +103,17 @@ def scrape_site_links(url, max_links=8):
  
         # Define patterns to match variations in link text
         link_text_patterns = [
-            "Official\s?Site",
-            "Rooms\s?&\s?Suites",
+            "Official Site",
+            "Rooms & Suites",
             "WEDDING",
-            "Facilities\s?&\s?Activities",
-            "Sports\s?&\s?Entertainment",
+            "Facilities & Activities",
+            "Sports & Entertainment",
             "Specials",
             "Activities",
-            "Groups\s?&\s?Meetings",
+            "Groups & Meetings",
             "Dining",
-            "Meetings\s?&\s?Events",
-            "Contact\s?Us",
+            "Meetings & Events",
+            "Contact Us",
             "ACCOMMODATION",
             "Photos",
             "Events",
@@ -133,13 +133,13 @@ def scrape_site_links(url, max_links=8):
         # Relevant words related to meetings and events
         relevant_meetings_words = ["Meetings & Events", "Groups & Meetings", "Meetings", "Events", "WEDDING", "Wedding"]
 
-        relevant_Entertainment_words=["Sports\s?&\s?Entertainment", "Sports", "Entertainment", "Pool & sea", "Salt Water Swimming Pool", "swimming pool", "pool", "sea", "Water Park","Specials"]
+        relevant_Entertainment_words=["Sports & Entertainment", "Sports", "Entertainment", "Pool & sea", "Salt Water Swimming Pool", "swimming pool", "pool", "sea", "Water Park","Specials"]
 
-        relevant_Facilities_Activities_words=["Facilities\s?&\s?Activities", "Activities"]
+        relevant_Facilities_Activities_words=["Facilities & Activities", "Activities"]
 
-        relevant_Spa_Wellness_words=["Spa\s?&\s?Wellness", "Spa", "Wellness\s?&\s?fitness"]
+        relevant_Spa_Wellness_words=["Spa & Wellness", "Spa", "Wellness & fitness"]
 
-        relevant_Photo_Gallery_words=["Photo\s?Gallery", "Photo"]
+        relevant_Photo_Gallery_words=["Photo Gallery", "Photo"]
  
         # Compile regex pattern for link text
         link_text_pattern = re.compile('|'.join(link_text_patterns), re.IGNORECASE)
