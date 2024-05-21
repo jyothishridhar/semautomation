@@ -1,10 +1,9 @@
+streamlit
 pandas
 requests
 beautifulsoup4
 selenium
-openpyxl
-fsspec
-streamlit
-lxml
+webdriver_manager
+
 
 

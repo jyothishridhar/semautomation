@@ -16,6 +16,7 @@ from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 import signal
 import threading
+from requests.exceptions import Timeout
  
  
  
