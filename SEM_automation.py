@@ -214,6 +214,7 @@ def scrape_similar_hotels(google_url, header_text):
         print("Fetching similar hotels...")
         options = Options()
         options.add_argument("start-maximized")
+        options.binary_location = '/app/.apt/opt/google/chrome/chrome'
         driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
         # driver.get("https://www.google.com")
         driver.get(google_url)
