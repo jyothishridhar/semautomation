@@ -213,6 +213,10 @@ def scrape_similar_hotels(google_url, header_text):
     try:
         print("Fetching similar hotels...")
         options = Options()
+        options.add_argument("--headless")
+        options.add_argument("--disable-gpu")
+        options.add_argument("--no-sandbox")
+        options.add_argument("--disable-dev-shm-usage")
         options.add_argument("start-maximized")
         options.binary_location = os.environ.get('GOOGLE_CHROME_BIN')
         driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
