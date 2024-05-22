@@ -1,2 +1,2 @@
-web: python SEM_automation.py 
-web:node server.js
+web: streamlit run SEM_automation.py --server.port=$PORT
+
