@@ -109,36 +109,35 @@ def scrape_site_links(url, max_links=8):
 
         # Define patterns to match variations in link text
         link_text_patterns = [
-            "Official\\s?Site",
-            "Rooms\\s?&\\s?Suites",
-            "WEDDING",
-            "Facilities\\s?&\\s?Activities",
-            "Sports\\s?&\\s?Entertainment",
+            "Official Site",
+            "Rooms&Suites",
+            "Wedding",
+            "Facilities&Activities",
+            "Sports&Entertainment",
             "Specials",
             "Activities",
-            "Groups\\s?&\\s?Meetings",
+            "Groups&Meetings",
             "Dining",
             "Meetings&Events",
             "Contact Us",
-            "ACCOMMODATION",
             "Photos",
             "Events",
             "Pool&sea",
             "Wellness&fitness",
             "Water Park",
             "Salt Water Swimming Pool",
-            "Accommodations",
-            "Contact Us",
+            "Accommodation",
             "Amenities",
             "Location",
             "Rooms",
-            "Gallery"
+            "Gallery",
+            "Pool bar", 
         ]
 
         # Relevant words related to meetings and events
-        relevant_meetings_words = ["Meetings&Events", "Groups\\s?&\\s?Meetings", "Meetings", "Events", "WEDDING", "Wedding"]
-        relevant_Entertainment_words = ["Sports\\s?&\\s?Entertainment", "Live music", "Stand-up comedy", "Magic shows", "Art exhibitions", "Sports", "Entertainment"]
-        relevant_Facilities_Activities_words = ["Facilities\\s?&\\s?Activities", "Activities", "Pool&sea", "Salt Water Swimming Pool", "swimming pool", "pool", "sea", "Water Park", "Specials", "Poolside", "Pool area", "Pool deck", "Pool bar", "Tours & Activities"]
+        relevant_meetings_words = ["Meetings&Events", "Groups&Meetings", "Meetings", "Events", "Wedding"]
+        relevant_Entertainment_words = ["Sports&Entertainment", "Live music", "Stand-up comedy", "Magic shows", "Art exhibitions", "Sports", "Entertainment"]
+        relevant_Facilities_Activities_words = ["Facilities&Activities", "Activities", "Pool&sea", "Salt Water Swimming Pool", "swimming pool", "pool", "sea", "Water Park", "Specials", "Poolside", "Pool area", "Pool deck", "Pool bar", "Tours & Activities"]
         relevant_Spa_Wellness_words = ["Spa&Wellness", "Spa", "Wellness&fitness"]
         relevant_Photo_Gallery_words = ["PhotoGallery", "Photo","Gallery"]
         relevant_Dining_words = ["All Dining & Bar Facilities", "Dining", "Eatery", "Pub", "Diner", "Trattoria", "Brasserie", "Café", "Bistro"]
