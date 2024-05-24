@@ -131,7 +131,8 @@ def scrape_site_links(url, max_links=8):
             "Contact Us",
             "Amenities",
             "Location",
-            "Rooms"
+            "Rooms",
+            "Gallery"
         ]
 
         # Relevant words related to meetings and events
