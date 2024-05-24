@@ -128,7 +128,7 @@ def scrape_site_links(url, max_links=8):
             "Accommodations",
             "Contact Us"
             "Amenities",
-            "Location"
+            "Location",
         ]
  
         # # Relevant words related to water activities
@@ -137,9 +137,9 @@ def scrape_site_links(url, max_links=8):
         # Relevant words related to meetings and events
         relevant_meetings_words = ["Meetings&Events", "Groups\\s?&\\s?Meetings", "Meetings", "Events", "WEDDING", "Wedding"]
 
-        relevant_Entertainment_words=["Sports\\s?&\\s?Entertainment", "Sports", "Entertainment", "Pool&sea", "Salt Water Swimming Pool", "swimming pool", "pool", "sea", "Water Park","Specials"]
+        relevant_Entertainment_words=["Sports\\s?&\\s?Entertainment", "Live music","Stand-up comedy","Magic shows","Art exhibitions","Sports", "Entertainment"]
 
-        relevant_Facilities_Activities_words=["Facilities\\s?&\\s?Activities", "Activities"]
+        relevant_Facilities_Activities_words=["Facilities\\s?&\\s?Activities", "Activities","Pool&sea", "Salt Water Swimming Pool", "swimming pool", "pool", "sea", "Water Park","Specials","Poolside","Pool area","Pool deck","Pool bar"]
 
         relevant_Spa_Wellness_words=["Spa&Wellness", "Spa", "Wellness&fitness"]
 
@@ -268,6 +268,10 @@ def scrape_similar_hotels(google_url, header_text):
 # Define the list of amenities to check for
 amenities_to_check = [
     "Swimming Pool",
+    "Poolside",
+    "Pool area",
+    "Pool deck",
+    "Pool bar",
     "Beach Access",
     "Spa Services",
     "Gourmet Dining",
@@ -292,6 +296,7 @@ amenities_to_check = [
     "Balcony",
     "Lift",
     "Iron & Ironing Board"
+    
 ]
 
 # Define a custom exception for timeout
@@ -441,7 +446,7 @@ if st.button("Scrape Data"):
             response = requests.get(url)
             response.raise_for_status()
             page_content = response.text
-            water_keywords = ["swimming pool", "Water Park", "pool", "sea", "Salt Water Swimming Pool", "Pool & sea"]
+            water_keywords = ["swimming pool", "Water Park", "pool", "sea", "Salt Water Swimming Pool", "Pool & sea","Poolside","Pool area","Pool deck","Pool bar"]
             # Balcony-related keywords
             balcony_keywords = ["balcony", "terrace", "veranda", "patio", "deck", "outdoor seating", "private balcony", "balcony view", "balcony access", "sun deck", "rooftop terrace", "lanai", "courtyard", "loggia", "open-air balcony", "French balcony", "wrap-around balcony", "overlooking balcony", "scenic balcony", "balcony suite"]
             # Pet-friendly keywords
