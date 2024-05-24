@@ -128,7 +128,8 @@ def scrape_site_links(url, max_links=8):
             "Accommodations",
             "Contact Us"
             "Amenities",
-            "Location"
+            "Location",
+            "Rooms"
             
         ]
  
@@ -140,7 +141,7 @@ def scrape_site_links(url, max_links=8):
 
         relevant_Entertainment_words=["Sports\\s?&\\s?Entertainment", "Live music","Stand-up comedy","Magic shows","Art exhibitions","Sports", "Entertainment"]
 
-        relevant_Facilities_Activities_words=["Facilities\\s?&\\s?Activities", "Activities","Pool&sea", "Salt Water Swimming Pool", "swimming pool", "pool", "sea", "Water Park","Specials","Poolside","Pool area","Pool deck","Pool bar"]
+        relevant_Facilities_Activities_words=["Facilities\\s?&\\s?Activities", "Activities","Pool&sea", "Salt Water Swimming Pool", "swimming pool", "pool", "sea", "Water Park","Specials","Poolside","Pool area","Pool deck","Pool bar","Tours & Activities"]
 
         relevant_Spa_Wellness_words=["Spa&Wellness", "Spa", "Wellness&fitness"]
 
