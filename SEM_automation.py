@@ -21,13 +21,19 @@ from requests.exceptions import Timeout
  
  
 def generate_variants(property_name, max_variants=5):
-    print("Property Name:", property_name)  # Add this print statement to check the value of property_name
+    print("Property Name:", property_name)  # Check the value of property_name
     if property_name is None:
         return []
-    # Split the property name into words
-    words = property_name.split()
+
+    # Remove non-alphabetic characters (symbols and numbers) from the property name
+    clean_property_name = re.sub(r'[^a-zA-Z\s]', '', property_name)
+
+    # Split the cleaned property name into words
+    words = clean_property_name.split()
+
     # Generate permutations of words
     word_permutations = permutations(words)
+
     # Join permutations to form variant names
     variants = [' '.join(perm) for i, perm in enumerate(word_permutations) if i < max_variants]
 
