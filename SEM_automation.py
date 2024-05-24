@@ -95,9 +95,11 @@ def scrape_site_links(url, max_links=8):
  
         # Parse the HTML content
         soup = BeautifulSoup(response.text, 'html.parser')
+        print("soup---",soup)
  
         # Find all anchor (a) tags
         anchor_tags = soup.find_all('a')
+        print("anchor_tags---",anchor_tags)
  
         # Set to store unique URLs
         unique_urls = set()
