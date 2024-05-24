@@ -144,7 +144,10 @@ def scrape_site_links(url, max_links=8):
         relevant_Spa_Wellness_words=["Spa&Wellness", "Spa", "Wellness&fitness"]
 
         relevant_Photo_Gallery_words=["PhotoGallery", "Photo"]
+
+        relevant_Dining_words=["All Dining & Bar Facilities","Dining","Eatery","Pub","Diner","Trattoria","Brasserie","Café","Bistro"]
  
+        relevant_Location_words=["Location","Locations","Destination & Location","Address","Venue","Spot","Place","Site","Locale","Area","Premises","Establishment"]
         # Compile regex pattern for link text
         link_text_pattern = re.compile('|'.join(link_text_patterns), re.IGNORECASE)
  
@@ -190,7 +193,15 @@ def scrape_site_links(url, max_links=8):
 
                     elif any(word.lower() in link_text.lower() for word in relevant_Photo_Gallery_words):
                         # Add "Meetings & events" to the site links
-                        site_links.append((link_url, "Photo Gallery"))         
+                        site_links.append((link_url, "Photo Gallery"))  
+
+                    elif any(word.lower() in link_text.lower() for word in relevant_Dining_words):
+                        # Add "Meetings & events" to the site links
+                        site_links.append((link_url, "Dining"))    
+
+                    elif any(word.lower() in link_text.lower() for word in relevant_Location_words):
+                        # Add "Meetings & events" to the site links
+                        site_links.append((link_url, "Location"))
     
 
 
