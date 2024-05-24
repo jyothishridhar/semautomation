@@ -133,14 +133,15 @@ def scrape_site_links(url, max_links=8):
             "Gallery",
             "Pool bar",
             "Restaurants",
-            "Discover"
+            "Discover",
+            "Our Services"
             ]
 
         # Relevant words related to meetings and events
         relevant_meetings_words = ["Meetings & Events", "Groups & Meetings", "Meetings", "Events", "Wedding"]
         relevant_Entertainment_words = ["Sports & Entertainment", "Live music", "Stand-up comedy", "Magic shows", "Art exhibitions", "Sports", "Entertainment"]
         relevant_Facilities_Activities_words = ["Facilities & Activities", "Activities", "Pool & sea", "Salt Water Swimming Pool", "swimming pool", "pool", "sea", "Water Park", "Specials", "Poolside", "Pool area", "Pool deck", "Pool bar", "Tours & Activities"]
-        relevant_Spa_Wellness_words = ["Spa & Wellness", "Spa", "Wellness & fitness","Discover"]
+        relevant_Spa_Wellness_words = ["Spa & Wellness", "Spa", "Wellness & fitness","Discover","Our Services"]
         relevant_Photo_Gallery_words = ["PhotoGallery", "Photo","Gallery"]
         relevant_Dining_words = ["All Dining & Bar Facilities","Restaurants" "Dining", "Eatery", "Pub", "Diner", "Trattoria", "Brasserie", "Café", "Bistro"]
         relevant_Location_words = ["Location", "Locations", "Destination & Location", "Address", "Venue", "Spot", "Place", "Site", "Locale", "Area", "Premises", "Establishment"]
@@ -257,6 +258,7 @@ amenities_to_check = [
     "Free Parking",
     "Fitness Center",
     "Room Service",
+    "Our Services"
     "Free WiFi",
     "Public Wi-Fi",
     "Wi-Fi Internet Access",
@@ -269,7 +271,6 @@ amenities_to_check = [
     "Express Check Out",
     "Phone",
     "Hair Dryer",
-    "Restaurant",
     "Bicycle Rental",
     "Balcony",
     "Lift",
