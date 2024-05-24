@@ -128,7 +128,8 @@ def scrape_site_links(url, max_links=8):
             "Accommodations",
             "Contact Us"
             "Amenities",
-            "Location",
+            "Location"
+            
         ]
  
         # # Relevant words related to water activities
@@ -148,6 +149,8 @@ def scrape_site_links(url, max_links=8):
         relevant_Dining_words=["All Dining & Bar Facilities","Dining","Eatery","Pub","Diner","Trattoria","Brasserie","Café","Bistro"]
  
         relevant_Location_words=["Location","Locations","Destination & Location","Address","Venue","Spot","Place","Site","Locale","Area","Premises","Establishment"]
+        relevant_Rooms_words=["Rooms","Room","Rooms & Suits", "Rooms and Suites","Guest Rooms","Suites","Deluxe Rooms","Executive Suites","Presidential Suite","Penthouse","Family Suites","Connecting Rooms","Private Suites"]
+        
         # Compile regex pattern for link text
         link_text_pattern = re.compile('|'.join(link_text_patterns), re.IGNORECASE)
  
@@ -203,7 +206,10 @@ def scrape_site_links(url, max_links=8):
                         # Add "Meetings & events" to the site links
                         site_links.append((link_url, "Location"))
     
-
+                    elif any(word.lower() in link_text.lower() for word in relevant_Rooms_words):
+                        # Add "Meetings & events" to the site links
+                        site_links.append((link_url, "Rooms & Suites"))
+     
 
  
                     else:
