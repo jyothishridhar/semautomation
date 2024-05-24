@@ -110,20 +110,20 @@ def scrape_site_links(url, max_links=8):
         # Define patterns to match variations in link text
         link_text_patterns = [
             "Official Site",
-            "Rooms&Suites",
+            "Rooms & uites",
             "Wedding",
-            "Facilities&Activities",
-            "Sports&Entertainment",
+            "Facilities & Activities",
+            "Sports & Entertainment",
             "Specials",
             "Activities",
-            "Groups&Meetings",
+            "Groups & Meetings",
             "Dining",
-            "Meetings&Events",
+            "Meetings & Events",
             "Contact Us",
             "Photos",
             "Events",
             "Pool&sea",
-            "Wellness&fitness",
+            "Wellness & fitness",
             "Water Park",
             "Salt Water Swimming Pool",
             "Accommodation",
@@ -135,10 +135,10 @@ def scrape_site_links(url, max_links=8):
         ]
 
         # Relevant words related to meetings and events
-        relevant_meetings_words = ["Meetings&Events", "Groups&Meetings", "Meetings", "Events", "Wedding"]
-        relevant_Entertainment_words = ["Sports&Entertainment", "Live music", "Stand-up comedy", "Magic shows", "Art exhibitions", "Sports", "Entertainment"]
-        relevant_Facilities_Activities_words = ["Facilities&Activities", "Activities", "Pool&sea", "Salt Water Swimming Pool", "swimming pool", "pool", "sea", "Water Park", "Specials", "Poolside", "Pool area", "Pool deck", "Pool bar", "Tours & Activities"]
-        relevant_Spa_Wellness_words = ["Spa&Wellness", "Spa", "Wellness&fitness"]
+        relevant_meetings_words = ["Meetings & Events", "Groups & Meetings", "Meetings", "Events", "Wedding"]
+        relevant_Entertainment_words = ["Sports & Entertainment", "Live music", "Stand-up comedy", "Magic shows", "Art exhibitions", "Sports", "Entertainment"]
+        relevant_Facilities_Activities_words = ["Facilities & Activities", "Activities", "Pool&sea", "Salt Water Swimming Pool", "swimming pool", "pool", "sea", "Water Park", "Specials", "Poolside", "Pool area", "Pool deck", "Pool bar", "Tours & Activities"]
+        relevant_Spa_Wellness_words = ["Spa & Wellness", "Spa", "Wellness & fitness"]
         relevant_Photo_Gallery_words = ["PhotoGallery", "Photo","Gallery"]
         relevant_Dining_words = ["All Dining & Bar Facilities", "Dining", "Eatery", "Pub", "Diner", "Trattoria", "Brasserie", "Café", "Bistro"]
         relevant_Location_words = ["Location", "Locations", "Destination & Location", "Address", "Venue", "Spot", "Place", "Site", "Locale", "Area", "Premises", "Establishment"]
