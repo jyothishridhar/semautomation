@@ -93,7 +93,6 @@ def extract_header_from_path(output_file):
         return None
  
 
-
 def scrape_site_links(url, max_links=8):
     try:
         # Fetch the HTML content of the webpage
@@ -104,6 +103,10 @@ def scrape_site_links(url, max_links=8):
         soup = BeautifulSoup(response.text, 'html.parser')
         print("soup---", soup)
 
+        # Find all anchor (a) tags
+        anchor_tags = soup.find_all('a')
+        print("anchor_tags---", anchor_tags)
+
         # Set to store unique URLs
         unique_urls = set()
 
@@ -113,7 +116,7 @@ def scrape_site_links(url, max_links=8):
         # Define patterns to match variations in link text
         link_text_patterns = [
             "Official Site",
-            "Rooms & Suites",
+            "Rooms & uites",
             "Wedding",
             "Facilities & Activities",
             "Sports & Entertainment",
@@ -138,88 +141,69 @@ def scrape_site_links(url, max_links=8):
             "Restaurants",
             "Discover",
             "Our Services"
-        ]
+            ]
 
-        # Relevant words related to different categories
+        # Relevant words related to meetings and events
         relevant_meetings_words = ["Meetings & Events", "Groups & Meetings", "Meetings", "Events", "Wedding"]
         relevant_Entertainment_words = ["Sports & Entertainment", "Live music", "Stand-up comedy", "Magic shows", "Art exhibitions", "Sports", "Entertainment"]
         relevant_Facilities_Activities_words = ["Facilities & Activities", "Activities", "Pool & sea", "Salt Water Swimming Pool", "Our Services","swimming pool", "pool", "sea", "Water Park", "Specials", "Poolside", "Pool area", "Pool deck", "Pool bar", "Tours & Activities"]
         relevant_Spa_Wellness_words = ["Spa & Wellness", "Spa", "Wellness & fitness","Discover"]
         relevant_Photo_Gallery_words = ["PhotoGallery", "Photo","Gallery"]
-        relevant_Dining_words = ["All Dining & Bar Facilities","Restaurants", "Dining", "Eatery", "Pub", "Diner", "Trattoria", "Brasserie", "Café", "Bistro"]
+        relevant_Dining_words = ["All Dining & Bar Facilities","Restaurants" "Dining", "Eatery", "Pub", "Diner", "Trattoria", "Brasserie", "Café", "Bistro"]
         relevant_Location_words = ["Location", "Locations", "Destination & Location", "Address", "Venue", "Spot", "Place", "Site", "Locale", "Area", "Premises", "Establishment"]
-        relevant_Rooms_words = ["Rooms", "Room", "Rooms & Suites", "Rooms and Suites", "Guest Rooms", "Suites", "Deluxe Rooms", "Executive Suites", "Presidential Suite", "Penthouse", "Family Suites", "Connecting Rooms", "Private Suites"]
+        relevant_Rooms_words = ["Rooms", "Room", "Rooms & Suits", "Rooms and Suites", "Guest Rooms", "Suites", "Deluxe Rooms", "Executive Suites", "Presidential Suite", "Penthouse", "Family Suites", "Connecting Rooms", "Private Suites"]
 
         # Compile regex pattern for link text
         link_text_pattern = re.compile('|'.join(link_text_patterns), re.IGNORECASE)
 
-        # Function to extract links
-        def extract_links(soup):
-            links = []
-            for a in soup.find_all('a', href=True):
-                links.append(a['href'])
-            return links
-
-        # Extracting all links
-        all_links = extract_links(soup)
-
-        # Extracting links specifically from the footer
-        footer_links = []
-        footer = soup.find('footer', class_='jupiterx-footer')
-        if footer:
-            footer_links = extract_links(footer)
-
-        # Combine all links and remove duplicates
-        combined_links = list(set(all_links + footer_links))
-
-        # Loop through all combined links and extract relevant links with specific text
-        for link_url in combined_links:
-            # Complete relative URLs if necessary
-            link_url = urljoin(url, link_url)
-            
-            # Skip if already processed
-            if link_url in unique_urls:
-                continue
-
-            unique_urls.add(link_url)
-            
-            # Get the anchor tag for the URL to fetch link text
-            a_tag = soup.find('a', href=link_url)
-            link_text = a_tag.get_text(strip=True) if a_tag else ''
+        # Loop through all anchor tags and extract links with specific text
+        for a in anchor_tags:
+            # Get the text of the anchor tag, stripped of leading and trailing whitespace
+            link_text = a.get_text(strip=True)
+            print("link_text", link_text)
 
             # Check if the link text matches any of the desired site links
             if link_text_pattern.search(link_text):
-                # Check if the link text matches any meeting/event-related words
-                if any(word.lower() in link_text.lower() for word in relevant_meetings_words):
-                    site_links.append((link_url, "Meetings & events"))
-                elif any(word.lower() in link_text.lower() for word in relevant_Entertainment_words):
-                    site_links.append((link_url, "Entertainment"))
-                elif any(word.lower() in link_text.lower() for word in relevant_Facilities_Activities_words):
-                    site_links.append((link_url, "Facilities & Activities"))
-                elif any(word.lower() in link_text.lower() for word in relevant_Spa_Wellness_words):
-                    site_links.append((link_url, "Spa & Wellness"))
-                elif any(word.lower() in link_text.lower() for word in relevant_Photo_Gallery_words):
-                    site_links.append((link_url, "Photo Gallery"))
-                elif any(word.lower() in link_text.lower() for word in relevant_Dining_words):
-                    site_links.append((link_url, "Dining"))
-                elif any(word.lower() in link_text.lower() for word in relevant_Location_words):
-                    site_links.append((link_url, "Location"))
-                elif any(word.lower() in link_text.lower() for word in relevant_Rooms_words):
-                    site_links.append((link_url, "Rooms & Suites"))
-                else:
-                    # Append both link URL and link text
-                    site_links.append((link_url, link_text))
+                # Extract the href attribute to get the link URL
+                link_url = a.get('href')
 
-                # Break the loop if the maximum number of links is reached
-                if len(site_links) >= max_links:
-                    break
+                # Complete relative URLs if necessary
+                link_url = urljoin(url, link_url)
+
+                # Add the URL to the set of unique URLs
+                if link_url not in unique_urls:
+                    unique_urls.add(link_url)
+
+                    # Check if the link text matches any meeting/event-related words
+                    if any(word.lower() in link_text.lower() for word in relevant_meetings_words):
+                        site_links.append((link_url, "Meetings & events"))
+                    elif any(word.lower() in link_text.lower() for word in relevant_Entertainment_words):
+                        site_links.append((link_url, "Entertainment"))
+                    elif any(word.lower() in link_text.lower() for word in relevant_Facilities_Activities_words):
+                        site_links.append((link_url, "Facilities & Activities"))
+                    elif any(word.lower() in link_text.lower() for word in relevant_Spa_Wellness_words):
+                        site_links.append((link_url, "Spa & Wellness"))
+                    elif any(word.lower() in link_text.lower() for word in relevant_Photo_Gallery_words):
+                        site_links.append((link_url, "Photo Gallery"))
+                    elif any(word.lower() in link_text.lower() for word in relevant_Dining_words):
+                        site_links.append((link_url, "Dining"))
+                    elif any(word.lower() in link_text.lower() for word in relevant_Location_words):
+                        site_links.append((link_url, "Location"))
+                    elif any(word.lower() in link_text.lower() for word in relevant_Rooms_words):
+                        site_links.append((link_url, "Rooms & Suites"))
+                    else:
+                        # Append both link URL and link text
+                        site_links.append((link_url, link_text))
+
+                    # Break the loop if the maximum number of links is reached
+                    if len(site_links) >= max_links:
+                        break
 
         return site_links
 
     except Exception as e:
         print("An error occurred while scraping the site links:", e)
         return None
-
     
 def scrape_similar_hotels(google_url, header_text):
     
