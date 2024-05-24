@@ -93,6 +93,7 @@ def extract_header_from_path(output_file):
         return None
  
 
+
 def scrape_site_links(url, max_links=8):
     try:
         # Fetch the HTML content of the webpage
@@ -102,10 +103,6 @@ def scrape_site_links(url, max_links=8):
         # Parse the HTML content
         soup = BeautifulSoup(response.text, 'html.parser')
         print("soup---", soup)
-
-        # Find all anchor (a) tags
-        anchor_tags = soup.find_all('a')
-        print("anchor_tags---", anchor_tags)
 
         # Set to store unique URLs
         unique_urls = set()
@@ -223,6 +220,7 @@ def scrape_site_links(url, max_links=8):
         print("An error occurred while scraping the site links:", e)
         return None
 
+    
 def scrape_similar_hotels(google_url, header_text):
     
     try:
