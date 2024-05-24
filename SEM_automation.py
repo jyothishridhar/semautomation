@@ -103,9 +103,12 @@ def scrape_site_links(url, max_links=8):
         soup = BeautifulSoup(response.text, 'html.parser')
         print("soup---", soup)
 
-        # Find all anchor (a) tags
-        anchor_tags = soup.find_all('a')
-        print("anchor_tags---", anchor_tags)
+        # Find the main content and footer sections
+        main_content = soup.body
+        footer_content = soup.find('footer')
+
+        # Combine all anchor tags from main content and footer
+        anchor_tags = main_content.find_all('a') + (footer_content.find_all('a') if footer_content else [])
 
         # Set to store unique URLs
         unique_urls = set()
@@ -115,32 +118,9 @@ def scrape_site_links(url, max_links=8):
 
         # Define patterns to match variations in link text
         link_text_patterns = [
-            "Official Site",
-            "Rooms & uites",
-            "Wedding",
-            "Facilities & Activities",
-            "Sports & Entertainment",
-            "Specials",
-            "Activities",
-            "Groups & Meetings",
-            "Dining",
-            "Meetings & Events",
-            "Contact Us",
-            "Photos",
-            "Events",
-            "Pool & sea",
-            "Wellness & fitness",
-            "Water Park",
-            "Salt Water Swimming Pool",
-            "Accommodation",
-            "Amenities",
-            "Location",
-            "Rooms",
-            "Gallery",
-            "Pool bar",
-            "Restaurants",
-            "Discover",
-            "Our Services"
+            "Official Site","Rooms & uites","Wedding","Facilities & Activities","Sports & Entertainment","Specials","Live music", "Stand-up comedy", "Magic shows", "Art exhibitions","Poolside", "Pool area", "Pool deck", "Pool bar", "Tours & Activities","All Dining & Bar Facilities",
+            "Activities","Groups & Meetings","Dining","Meetings & Events","Contact Us","Photos","Events","Pool & sea","Wellness & fitness","Water Park","Salt Water Swimming Pool","Accommodation","Amenities","Location","Rooms","Gallery","Pool bar","Restaurants","Discover","Our Services",
+            "Eatery", "Pub", "Diner", "Trattoria", "Brasserie", "Café", "Bistro","Destination & Location", "Address", "Venue", "Spot", "Place", "Site", "Locale", "Area", "Premises", "Establishment","Guest Rooms", "Suites", "Deluxe Rooms", "Executive Suites", "Presidential Suite", "Penthouse", "Family Suites", "Connecting Rooms", "Private Suites"
             ]
 
         # Relevant words related to meetings and events
@@ -252,29 +232,17 @@ def scrape_similar_hotels(google_url, header_text):
    
 # Define the list of amenities to check for
 amenities_to_check = [
-    "Swimming Pool",
-    # "Poolside",
-    "Pool area",
-    "Pool deck",
-    "Pool bar",
+    "Swimming Pool","Poolside","Pool area","Pool deck","Pool bar",
     "Beach Access",
     "Spa Services",
     "Gourmet Dining",
     "Free Breakfast",
     "Free Parking",
     "Fitness Center",
-    "Room Service",
-    "Daily Housekeeping"
-    "Our Services"
-    "Free WiFi",
-    "Public Wi-Fi",
-    "Wi-Fi Internet Access",
-    "Wi-Fi",
+    "Room Service","Daily Housekeeping","Our Services",
+    "Free WiFi","Public Wi-Fi","Wi-Fi Internet Access","Wi-Fi",
     "Business Center",
-    "A/C",
-    "Air-conditioning",
-    "Air Conditioning & Heating",
-    "Air Conditioning"
+    "A/C","Air-conditioning","Air Conditioning & Heating","Air Conditioning",
     "Laundry Services",
     "Easy Check In",
     "Express Check Out",
