@@ -268,7 +268,7 @@ def scrape_similar_hotels(google_url, header_text):
 # Define the list of amenities to check for
 amenities_to_check = [
     "Swimming Pool",
-    "Poolside",
+    # "Poolside",
     "Pool area",
     "Pool deck",
     "Pool bar",
