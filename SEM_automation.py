@@ -108,7 +108,7 @@ def scrape_site_links(url, max_links=8):
 
         # Parse the HTML content
         soup = BeautifulSoup(response.text, 'html.parser')
-        print("soup---", soup)
+        # print("soup---", soup)
 
         # Find the main content and footer sections
         main_content = soup.body
@@ -147,7 +147,7 @@ def scrape_site_links(url, max_links=8):
         for a in anchor_tags:
             # Get the text of the anchor tag, stripped of leading and trailing whitespace
             link_text = a.get_text(strip=True)
-            print("link_text", link_text)
+            # print("link_text", link_text)
 
             # Check if the link text matches any of the desired site links
             if link_text_pattern.search(link_text):
@@ -229,7 +229,7 @@ def scrape_similar_hotels(google_url, header_text):
         # Close the browser
         driver.quit()
  
-        print("Negative Keywords:", negative_keywords)
+        # print("Negative Keywords:", negative_keywords)
         return negative_keywords
  
     except Exception as e:
