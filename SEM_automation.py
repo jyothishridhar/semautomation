@@ -465,7 +465,7 @@ if st.button("Scrape Data"):
         df = pd.concat([header_df, paragraph_df, site_links_df, property_url, property_name_variants_df, negative_keywords_df, amenities_df], axis=1)
  
         try:
-            response = requests.get(url)
+            response = requests.get(url,headers=headers)
             response.raise_for_status()
             page_content = response.text
             water_keywords = ["swimming pool", "Water Park", "pool", "sea", "Salt Water Swimming Pool", "Pool & sea","Poolside","Pool area","Pool deck","Pool bar"]
