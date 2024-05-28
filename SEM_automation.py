@@ -50,6 +50,7 @@ def scrape_first_proper_paragraph(url):
         soup = BeautifulSoup(response.text, 'html.parser')
         # Find all <p> tags
         p_tags = soup.find_all('p')
+        print(" p_tags::::", p_tags)
         # Initialize a variable to store the text of the first two paragraphs
         first_two_paragraphs_text = ''
  
