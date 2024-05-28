@@ -18,7 +18,9 @@ import signal
 import threading
 from requests.exceptions import Timeout
  
- 
+headers = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+}
  
 def generate_variants(property_name, max_variants=5):
     print("Property Name:", property_name)  # Check the value of property_name
@@ -284,7 +286,7 @@ def scrape_amenities(url):
             return []
 
         # Fetch the HTML content of the webpage with a timeout
-        response = requests.get(url, timeout=60)
+        response = requests.get(url, headers=headers, timeout=60)
         response.raise_for_status()  # Raise an exception for non-HTTP or non-HTTPS URLs
 
         # Parse the HTML content
@@ -318,7 +320,7 @@ def fetch_amenities_from_sub_links(site_links, max_sub_links=4, timeout=10):
     amenities_found = set()
     for link_url, _ in site_links:
         try:
-            response = requests.get(link_url, timeout=timeout)
+            response = requests.get(link_url, headers=headers,timeout=timeout)
             response.raise_for_status()
             amenities = scrape_amenities(link_url)
             if amenities:
@@ -360,7 +362,7 @@ def fetch_amenities_from_sub_links_1(sub_links, max_sub_links_1=4, timeout=10):
     amenities_found = set()
     for urls in sub_links:
         try:
-            response = requests.get(urls, timeout=timeout)
+            response = requests.get(urls, headers=headers, timeout=timeout)
             response.raise_for_status()
             amenities = scrape_amenities(urls)
             if amenities:
