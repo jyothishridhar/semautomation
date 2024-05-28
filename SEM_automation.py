@@ -256,6 +256,7 @@ amenities_to_check = [
     "Hair Dryer",
     "Bicycle Rental",
     "Balcony",
+    "Balcony/terrace"
     "Lift",
     "Iron & Ironing Board"
     
