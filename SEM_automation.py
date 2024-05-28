@@ -358,47 +358,47 @@ def fetch_amenities_from_sub_links(site_links, max_sub_links=4, timeout=15):
 
     return list(amenities_found)[:8]
 
-def fetch_amenities_from_sub_links_1(sub_links, max_sub_links_1=4, timeout=15):
-    amenities_found = set()
-    for urls in sub_links:
-        try:
-            response = requests.get(urls, headers=headers, timeout=timeout)
-            response.raise_for_status()
-            amenities = scrape_amenities(urls)
-            if amenities:
-                amenities_found.update(amenities)
+# def fetch_amenities_from_sub_links_1(sub_links, max_sub_links_1=4, timeout=15):
+#     amenities_found = set()
+#     for urls in sub_links:
+#         try:
+#             response = requests.get(urls, headers=headers, timeout=timeout)
+#             response.raise_for_status()
+#             amenities = scrape_amenities(urls)
+#             if amenities:
+#                 amenities_found.update(amenities)
 
-            if max_sub_links_1 > 0:
-                soup = BeautifulSoup(response.text, 'html.parser')
-                anchor_tags = soup.find_all('a', href=True)
-                unique_urls = set()
-                sub_links_1 = []
+#             if max_sub_links_1 > 0:
+#                 soup = BeautifulSoup(response.text, 'html.parser')
+#                 anchor_tags = soup.find_all('a', href=True)
+#                 unique_urls = set()
+#                 sub_links_1 = []
 
-                for a in anchor_tags:
-                    sub_link_url = a['href']
-                    sub_link_url = urljoin(urls, sub_link_url)
-                    if sub_link_url not in unique_urls:
-                        unique_urls.add(sub_link_url)
-                        sub_links_1.append(sub_link_url)
-                        if len(sub_links_1) >= max_sub_links_1:
-                            break
+#                 for a in anchor_tags:
+#                     sub_link_url = a['href']
+#                     sub_link_url = urljoin(urls, sub_link_url)
+#                     if sub_link_url not in unique_urls:
+#                         unique_urls.add(sub_link_url)
+#                         sub_links_1.append(sub_link_url)
+#                         if len(sub_links_1) >= max_sub_links_1:
+#                             break
 
-                for sub_link_url in sub_links_1:
-                    sub_link_amenities = scrape_amenities(sub_link_url)
-                    if sub_link_amenities:
-                        amenities_found.update(sub_link_amenities)
-                        max_sub_links_1 -= 1
+#                 for sub_link_url in sub_links_1:
+#                     sub_link_amenities = scrape_amenities(sub_link_url)
+#                     if sub_link_amenities:
+#                         amenities_found.update(sub_link_amenities)
+#                         max_sub_links_1 -= 1
 
-                max_sub_links_1 -= len(sub_links_1)
-                if max_sub_links_1 <= 0:
-                    break
-        except Timeout:
-            print(f"Timeout occurred while fetching amenities from sub-link: {urls}")
-            continue
-        except Exception as e:
-            print(f"An error occurred while fetching amenities from sub-link {urls}: {e}")
+#                 max_sub_links_1 -= len(sub_links_1)
+#                 if max_sub_links_1 <= 0:
+#                     break
+#         except Timeout:
+#             print(f"Timeout occurred while fetching amenities from sub-link: {urls}")
+#             continue
+#         except Exception as e:
+#             print(f"An error occurred while fetching amenities from sub-link {urls}: {e}")
 
-    return list(amenities_found)[:8]
+#     return list(amenities_found)[:8]
  
 # Streamlit app code
 st.title("SEM Creation Template")
@@ -423,11 +423,11 @@ if st.button("Scrape Data"):
         amenities_from_sub_links = fetch_amenities_from_sub_links(site_links, max_sub_links=17)
         # Define sub_links as a subset of site_links or another appropriate list
         sub_links = [link[0] for link in site_links]  # Assuming site_links is a list of tuples
-        amenities_from_sub_links_1=fetch_amenities_from_sub_links_1(sub_links, max_sub_links_1=4, timeout=10)
+        # amenities_from_sub_links_1=fetch_amenities_from_sub_links_1(sub_links, max_sub_links_1=4, timeout=10)
 
     
         # Combine all fetched amenities
-        all_amenities = amenities_found + amenities_from_links + amenities_from_sub_links + amenities_from_sub_links_1
+        all_amenities = amenities_found + amenities_from_links + amenities_from_sub_links 
         # Ensure we have at most 8 unique amenities
         unique_amenities = list(set(all_amenities))[:8]
  
