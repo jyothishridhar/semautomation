@@ -380,14 +380,14 @@ def fetch_amenities_from_sub_links_1(sub_links, max_sub_links_1=4, timeout=10):
                     if sub_link_url not in unique_urls:
                         unique_urls.add(sub_link_url)
                         sub_links_1.append(sub_link_url)
-                        if len(sub_links_1) >= max_sub_links:
+                        if len(sub_links_1) >= max_sub_links_1:
                             break
 
                 for sub_link_url in sub_links_1:
                     sub_link_amenities = scrape_amenities(sub_link_url)
                     if sub_link_amenities:
                         amenities_found.update(sub_link_amenities)
-                        max_sub_links -= 1
+                        max_sub_links_1 -= 1
 
                 max_sub_links_1 -= len(sub_links_1)
                 if max_sub_links_1 <= 0:
