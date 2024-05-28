@@ -95,8 +95,14 @@ def extract_header_from_path(output_file):
 
 def scrape_site_links(url, max_links=8):
     try:
+
+        headers = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+}
+
+        response = requests.get(url, headers=headers)
         # Fetch the HTML content of the webpage
-        response = requests.get(url)
+        # response = requests.get(url)
         response.raise_for_status()  # Raise an exception for bad requests
 
         # Parse the HTML content
@@ -239,7 +245,7 @@ amenities_to_check = [
     "Free Breakfast",
     "Free Parking",
     "Fitness Center",
-    "Room Service","Daily Housekeeping","Our Services",
+    "Room Service","Daily Housekeeping",
     "Free WiFi","Public Wi-Fi","Wi-Fi Internet Access","Wi-Fi",
     "Business Center",
     "A/C","Air-conditioning","Air Conditioning & Heating","Air Conditioning",
