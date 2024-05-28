@@ -43,40 +43,48 @@ def generate_variants(property_name, max_variants=5):
 # Define function to scrape the first proper paragraph
 def scrape_first_proper_paragraph(url):
     try:
+        headers = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+        }
+        
         # Fetch the HTML content of the webpage
-        response = requests.get(url, timeout=10)
+        response = requests.get(url, headers=headers, timeout=10)
         response.raise_for_status()  # Raise an exception for bad requests
+        
         # Parse the HTML content
         soup = BeautifulSoup(response.text, 'html.parser')
-        print("soup",soup)
+        print("Soup object:", soup.prettify())  # Pretty-print the parsed HTML
+        
         # Find all <p> tags
         p_tags = soup.find_all('p')
-        print("p_tags:", p_tags)
+        print("Found <p> tags:", len(p_tags))  # Number of <p> tags found
+        
         # Initialize a variable to store the text of the first two paragraphs
         first_two_paragraphs_text = ''
- 
-        # Find the text of the first two proper paragraphs
         paragraph_count = 0
+        
+        # Find the text of the first two proper paragraphs
         for p in p_tags:
             paragraph = p.text.strip()
+            print(f"Paragraph {paragraph_count + 1}: {paragraph[:100]}...")  # Print the first 100 characters
             if len(paragraph) > 150:  # Check if the paragraph is not empty
                 first_two_paragraphs_text += paragraph + ' '  # Add space between paragraphs
                 paragraph_count += 1
                 if paragraph_count == 3:  # Stop after finding the first two paragraphs
                     break
- 
+        
         # Split the text of the first two paragraphs into sentences
         sentences = re.split(r'(?<!\w\.\w.)(?<![A-Z][a-z]\.)(?<=\.|\?)\s', first_two_paragraphs_text)
- 
-        # Ensure we have at least two sentences
-        while len(sentences) < 3:  # Fetch the next two sentences as well
+        
+        # Ensure we have at least four sentences
+        while len(sentences) < 4:
             sentences.append('')  # Append empty strings if necessary
- 
+        
         # Return the first two sentences and next two sentences
-        return sentences[0] + ' ' + sentences[1] , sentences[2] + ' ' + sentences[3]
- 
+        return sentences[0] + ' ' + sentences[1], sentences[2] + ' ' + sentences[3]
+    
     except Exception as e:
-        print("An error occurred while scraping first proper paragraph:", e)
+        print("An error occurred while scraping the first proper paragraph:", e)
         return None, None
    
 def extract_header_from_path(output_file):
