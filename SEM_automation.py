@@ -419,11 +419,13 @@ if st.button("Scrape Data"):
         print("amenities_from_links",amenities_from_links)
         # Fetch amenities from subsequent links
         amenities_from_sub_links = fetch_amenities_from_sub_links(site_links, max_sub_links=17)
+        # Define sub_links as a subset of site_links or another appropriate list
+        sub_links = [link[0] for link in site_links]  # Assuming site_links is a list of tuples
         amenities_from_sub_links_1=fetch_amenities_from_sub_links_1(sub_links, max_sub_links_1=4, timeout=10)
 
     
         # Combine all fetched amenities
-        all_amenities = amenities_found + amenities_from_links + amenities_from_sub_links
+        all_amenities = amenities_found + amenities_from_links + amenities_from_sub_links + amenities_from_sub_links_1
         # Ensure we have at most 8 unique amenities
         unique_amenities = list(set(all_amenities))[:8]
  
