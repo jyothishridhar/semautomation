@@ -57,7 +57,7 @@ def scrape_first_proper_paragraph(url):
         paragraph_count = 0
         for p in p_tags:
             paragraph = p.text.strip()
-            if len(paragraph) > 200:  # Check if the paragraph is not empty
+            if len(paragraph) > 50:  # Check if the paragraph is not empty
                 first_two_paragraphs_text += paragraph + ' '  # Add space between paragraphs
                 paragraph_count += 1
                 if paragraph_count == 3:  # Stop after finding the first two paragraphs
@@ -67,7 +67,7 @@ def scrape_first_proper_paragraph(url):
         sentences = re.split(r'(?<!\w\.\w.)(?<![A-Z][a-z]\.)(?<=\.|\?)\s', first_two_paragraphs_text)
  
         # Ensure we have at least two sentences
-        while len(sentences) < 4:  # Fetch the next two sentences as well
+        while len(sentences) < 3:  # Fetch the next two sentences as well
             sentences.append('')  # Append empty strings if necessary
  
         # Return the first two sentences and next two sentences
