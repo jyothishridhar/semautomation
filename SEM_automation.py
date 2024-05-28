@@ -112,7 +112,7 @@ def scrape_site_links(url, max_links=8):
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
 }
 
-        response = requests.get(url, headers=headers)
+        response = requests.get(url, headers=headers,timeout=15)
         # Fetch the HTML content of the webpage
         # response = requests.get(url)
         response.raise_for_status()  # Raise an exception for bad requests
@@ -286,7 +286,7 @@ def scrape_amenities(url):
             return []
 
         # Fetch the HTML content of the webpage with a timeout
-        response = requests.get(url, headers=headers, timeout=60)
+        response = requests.get(url, headers=headers, timeout=30)
         response.raise_for_status()  # Raise an exception for non-HTTP or non-HTTPS URLs
 
         # Parse the HTML content
@@ -316,7 +316,7 @@ def fetch_amenities_from_links(site_links):
             print(f"An error occurred while fetching amenities from link_url {link_url}: {e}")
     return amenities_found[:8]
 
-def fetch_amenities_from_sub_links(site_links, max_sub_links=4, timeout=10):
+def fetch_amenities_from_sub_links(site_links, max_sub_links=4, timeout=15):
     amenities_found = set()
     for link_url, _ in site_links:
         try:
@@ -358,7 +358,7 @@ def fetch_amenities_from_sub_links(site_links, max_sub_links=4, timeout=10):
 
     return list(amenities_found)[:8]
 
-def fetch_amenities_from_sub_links_1(sub_links, max_sub_links_1=4, timeout=10):
+def fetch_amenities_from_sub_links_1(sub_links, max_sub_links_1=4, timeout=15):
     amenities_found = set()
     for urls in sub_links:
         try:
@@ -465,7 +465,7 @@ if st.button("Scrape Data"):
         df = pd.concat([header_df, paragraph_df, site_links_df, property_url, property_name_variants_df, negative_keywords_df, amenities_df], axis=1)
  
         try:
-            response = requests.get(url,headers=headers)
+            response = requests.get(url,headers=headers,timeout=10)
             response.raise_for_status()
             page_content = response.text
             water_keywords = ["swimming pool", "Water Park", "pool", "sea", "Salt Water Swimming Pool", "Pool & sea","Poolside","Pool area","Pool deck","Pool bar"]
