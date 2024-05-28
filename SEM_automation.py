@@ -60,18 +60,18 @@ def scrape_first_proper_paragraph(url):
             if len(paragraph) > 200:  # Check if the paragraph is not empty
                 first_two_paragraphs_text += paragraph + ' '  # Add space between paragraphs
                 paragraph_count += 1
-                if paragraph_count == 2:  # Stop after finding the first two paragraphs
+                if paragraph_count == 3:  # Stop after finding the first two paragraphs
                     break
  
         # Split the text of the first two paragraphs into sentences
         sentences = re.split(r'(?<!\w\.\w.)(?<![A-Z][a-z]\.)(?<=\.|\?)\s', first_two_paragraphs_text)
  
         # Ensure we have at least two sentences
-        while len(sentences) < 2:
+        while len(sentences) < 4:  # Fetch the next two sentences as well
             sentences.append('')  # Append empty strings if necessary
  
-        # Return the first two sentences
-        return sentences[0], sentences[1]
+        # Return the first two sentences and next two sentences
+        return sentences[0] + ' ' + sentences[1] , sentences[2] + ' ' + sentences[3]
  
     except Exception as e:
         print("An error occurred while scraping first proper paragraph:", e)
