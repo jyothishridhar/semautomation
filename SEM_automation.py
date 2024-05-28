@@ -69,7 +69,7 @@ def scrape_first_proper_paragraph(url):
         for p in p_tags:
             paragraph = p.text.strip()
             print(f"Paragraph {paragraph_count + 1}: {paragraph[:100]}...")  # Print the first 100 characters
-            if len(paragraph) > 100:  # Check if the paragraph is not empty
+            if len(paragraph) > 150:  # Check if the paragraph is not empty
                 first_two_paragraphs_text += paragraph + ' '  # Add space between paragraphs
                 paragraph_count += 1
                 if paragraph_count == 3:  # Stop after finding the first two paragraphs
