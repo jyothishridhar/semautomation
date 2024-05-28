@@ -48,6 +48,7 @@ def scrape_first_proper_paragraph(url):
         response.raise_for_status()  # Raise an exception for bad requests
         # Parse the HTML content
         soup = BeautifulSoup(response.text, 'html.parser')
+        print("soup",soup)
         # Find all <p> tags
         p_tags = soup.find_all('p')
         print("p_tags:", p_tags)
